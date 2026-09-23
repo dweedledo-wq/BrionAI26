@@ -9,6 +9,7 @@ set -eu
 CFG="$1"   # live-build config-map (bv. build/)
 HERE="$(dirname "$0")"
 LOGO="$HERE/../brand/file_00000000ace471f4822c47ae84fef756.png"
+BRAND="$HERE/branding"
 
 # 1) Pakketlijst fase 2: XFCE + mission-control-onderdelen.
 #    Alleen pakketten die geverifieerd in Debian stable bestaan —
@@ -64,41 +65,25 @@ apt-get install --yes --no-install-recommends code
 EOF
 chmod 0755 "$HOOKS/2000-install-vscode.chroot"
 
-# 1d) BrionAI26 Plymouth-splash (script-thema): donkere achtergrond,
-#     gouden laadbalk, logo gecentreerd. Logo komt uit brand/ (geüpload door Brionize).
+# 1d) BrionAI26 Plymouth-splash: thema uit bin/branding/ (aparte repo-bestanden,
+#     robuust tegen truncatie) + logo uit brand/.
 PLYM="$CFG/config/includes.chroot/usr/share/plymouth/themes/brionai26"
 mkdir -p "$PLYM"
+cp "$BRAND/brionai26.plymouth" "$PLYM/brionai26.plymouth"
+cp "$BRAND/brionai26.script" "$PLYM/brionai26.script"
 if [ -f "$LOGO" ]; then
     cp "$LOGO" "$PLYM/logo.png"
 else
     echo "WAARSCHUWING: brand-logo niet gevonden — splash zonder logo" >&2
 fi
-cat > "$PLYM/brionai26.plymouth" <<'EOF'
-[Plymouth Theme]
-Name=BrionAI26
-Description=BrionAI26 Mission Control boot splash
-ModuleName=script
-
-[script]
-ImageDir=/usr/share/plymouth/themes/brionai26
-ScriptFile=/usr/share/plymouth/themes/brionai26/brionai26.script
-EOF
-cat > "$PLYM/brionai26.script" <<'EOF'
-# BrionAI26 boot splash: donker paneel met gouden laadbalk onder het logo.
-screen_width = Window.GetWidth();
-screen_height = Window.GetHeight();
-
-background = Image.New(screen_width, screen);
-EOF
 
 # 1e) Plymouth-thema activeren via live-hook (thema is dan geïnstalleerd).
-mkdir -p "$CFG/config/hooks/live"
-cat > "$CFG/config/hooks/live/2100-set-plymouth-theme.chroot" <<'EOF'
+cat > "$HOOKS/2100-set-plymouth-theme.chroot" <<'EOF'
 #!/bin/sh
 set -eu
 plymouth-set-default-theme brionai26
 EOF
-chmod 0755 "$CFG/config/hooks/live/2100-set-plymouth-theme.chroot"
+chmod 0755 "$HOOKS/2100-set-plymouth-theme.chroot"
 
 # 1f) GRUB: quiet splash zodat Plymouth de boot toont.
 mkdir -p "$CFG/config/includes.chroot/etc/default/grub.d"
@@ -106,8 +91,7 @@ cat > "$CFG/config/includes.chroot/etc/default/grub.d/brionai26.cfg" <<'EOF'
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
 EOF
 
-# 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO, zodat
-#    elke nieuwe gebruiker de mission-control-opzet krijgt.
+# 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO.
 if [ -d "$HERE/../desktop/skel" ]; then
     mkdir -p "$CFG/config/includes.chroot/etc"
     cp -r "$HERE/../desktop/skel" "$CFG/config/includes.chroot/etc/skel"
@@ -148,7 +132,7 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" <<'EOF'
 </channel>
 EOF
 
-# 2c) Donkere XFCE-look: Adwaita-dark GTK-thema + LightDM-greeter met wallpaper.
+# 2c) Donkere look: GTK-thema, xfwm4-decoratie en LightDM-greeter.
 cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xsettings" version="1.0">
@@ -158,6 +142,15 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
   </property>
   <property name="Gtk" type="empty">
     <property name="FontName" type="string" value="Sans 10"/>
+  </property>
+</channel>
+EOF
+cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4-theme.xml" <<'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfwm4" version="1.0">
+  <property name="general" type="empty">
+    <property name="theme" type="string" value="Default-4.6"/>
+    <property name="show_dock_shadow" type="bool" value="false"/>
   </property>
 </channel>
 EOF
