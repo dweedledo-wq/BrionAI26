@@ -5,48 +5,49 @@
 
 ## Volgende stappen
 
-- Gebruiker: nieuwste ISO op USB live-booten en tegelwand + hover testen
-  (devilspie2 nog nooit op echte hardware bewezen).
-- Eerste echte Calamares-installatie op een testmachine.
-- Fase 5: first-boot wizard (git-identiteit, AI-sleutels, Tailscale).
-- Afwerking: GRUB-menu branding, Calamares NL-teksten, README-hotkeykaart.
+- Gebruiker: nieuwste ISO op USB live-booten; tegelwand + hover + splash testen.
+- Eerste echte Calamares-installatie op een testmachine → daarna v1.0-tag.
+- Eventueel: Calamares NL-teksten, paneel-styling, picom-blur versterken.
 - Oude testbranches op `dweedledo-wq/Vibe` opruimen (handmatig, gebruiker).
+
+## 2026-09-23 — FASE 5 BEWEZEN: first-boot wizard ✅
+
+- **CI-run 35905142233 geslaagd** (commit `743ab3c`):
+  - Wizard (zenity, geverifieerd in trixie) vraagt bij eerste login om
+    git-identiteit en optionele AI-sleutels (verborgen invoer, chmod 600,
+    ~/.config/brionai26/*.key). Draait eenmalig via marker-bestand.
+  - Geplaatst als /usr/bin/brionai26-firstboot + autostart-entry (XFCE).
+  - GRUB-menu toont voortaan "BrionAI26" (GRUB_DISTRIBUTOR) + quiet splash.
+  - README uitgebreid: download-link, hotkey-kaart, installatie-instructies.
+- Droogrun ving twee ontbrekende mkdir's (usr/bin, autostart) vóór de push;
+  blob-verificatie bevestigde de push identiek aan de geteste versie.
 
 ## 2026-09-23 — LOOK-POLISH 2: gouden vensterdecoratie ✅
 
-- **CI-run 35898371987 geslaagd** (commit `0437438`, Release
-  `iso-20260923-175953` — 1395 MB):
-  - Eigen xfwm4-thema "BrionAI26": kopie van het kleurveranderbare
-    Default-thema, met gouden titeltekst (#F0C090) op donker, blauwgrijze
-    inactieve titels, gebouwd door live-hook 2200-build-xfwm4-theme.chroot.
-  - Skel xfwm4.xml verwijst naar thema BrionAI26 + composited redirect.
-  - Themerc en hook staan als aparte repo-bestanden in bin/branding/ (robuust
-    tegen de terugkerende content-afwijkingen bij API-pushes).
-- Blob-verificatie vóór de build ving een kapotte quote in apply-desktop
-  (regel 159) — hersteld vóór CI, run in één keer geslaagd.
+- **CI-run 35898371987 geslaagd** (Release `iso-20260923-175953`, 1395 MB):
+  eigen xfwm4-thema "BrionAI26" (gouden titeltekst #F0C090 op donker),
+  gebouwd door live-hook uit het kleurveranderbare Default-thema.
 
-## 2026-09-23 — FASE 4 BEWEZEN: Calamares installer in ISO ✅
+## 2026-09-23 — FASE 4 BEWEZEN: Calamares installer ✅
 
-- **CI-run 35894259863 geslaagd** (commit `7525145`, ~10 min): Release
-  met Calamares + "Installeer BrionAI26" desktop-icoon (pkexec calamares).
-- Calamares 3.3.14 + calamares-settings-debian gegevengecheckt in trixie.
+- **CI-run 35894259863 geslaagd**: Calamares 3.3.14 + settings-debian,
+  "Installeer BrionAI26"-icoon op de live-desktop (pkexec calamares).
 
 ## 2026-09-23 — LOOK-POLISH 1: sci-fi HUD ✅
 
-- **CI-run 35896414869 geslaagd** (Release 1395 MB): JetBrains Mono
-  overal (conky + GTK), HUD-symbolen (◉ SYS/CPU/RAM/DSK/NET/BAT),
-  batterij-tegel, gestippelde gouden separators.
+- **CI-run 35896414869 geslaagd**: JetBrains Mono overal, HUD-symbolen
+  (◉ SYS/CPU/RAM/DSK/NET/BAT), batterij-tegel.
 
 ## 2026-09-23 — FASE 3 BEWEZEN: Dev Studio + VS Code ✅
 
-- **CI-run 35885427596 geslaagd** (1328 MB): VS Code via officiële
-  Microsoft apt-repo, Geany reserve, git/gitg/tmux/python/node/npm.
-- Downloads automatisch als publieke GitHub Release (geen login nodig).
+- **CI-run 35885427596 geslaagd** (1328 MB): VS Code (Microsoft apt-repo),
+  Geany, git/gitg/tmux/python/node/npm. Publieke Release-download toegevoegd.
 
 ## 2026-09-23 — FASE 2 AF: werkbladen + AI Matrix ✅
 
 - **CI-run 35871715186**: 3 werkbladen, Super+1/2/3, Super+C/G/M/A PWA's.
-- **CI-run 35855421072** (738,5 MB): eerste desktop-ISO, na conky-fix.
+- **CI-run 35855421072** (738,5 MB): eerste desktop-ISO, na conky-fix
+  (conky is virtueel in trixie; conky-all is de provider).
 
 ## 2026-09-22 — FASE 1 BEWEZEN ✅
 
