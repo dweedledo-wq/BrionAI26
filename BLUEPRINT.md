@@ -9,6 +9,35 @@ Command Center** van Brionize — van idee tot eindproduct bouwen met AI,
 automatisering (n8n) en developer-tooling, het liefst op oude hardware
 zonder (goede) GPU.
 
+### Kleurpalet (productbesluit, vastgesteld door AI in overleg met Brionize)
+**Missie-control-look** — gekozen om de "monitorwand uit films"-visie te
+dragen. Alle kleuren liggen als variabelen in één thema-bestand per
+build (`brand/theme/`), dus **later altijd aanpasbaar** zonder de rest
+van het systeem aan te raken.
+
+| Rol | Kleur | Hex | Gebruik |
+|---|---|---|---|
+| Achtergrond diep | vrijwel zwart | `#0A0E12` | bureaublad, basisvlakken |
+| Achtergrond paneel | donkerblauw-grijs | `#131A21` | tegelpanelen, taakbalk |
+| Glas-fill | semi-transparant | `rgba(19,26,33,0.72)` | picom-glas-effect |
+| Accent 1 (primair) | cyan/teal | `#00E5FF` | lichtende randen, hotkeys, klok |
+| Accent 2 (secundair) | matrix-groen | `#00FF9C` | status-OK, actieve tegels |
+| Waarschuwing | amber | `#FFB300` | hoge CPU/RAM, PM2-problemen |
+| Fout/kritiek | rood | `#FF3B4E` | service-down, logs fout |
+| Tekst primair | helder wit-blauw | `#D7E6F0` | HUD-tekst, labels |
+| Tekst secundair | gedempt | `#6B8399` | bij-regels, tijdstempels |
+
+- **Waarom dit palet:** cyan/teal is dé kleur van film-HUD's (Iron Man,
+  Westworld, SpaceX-console) en leest op oude schermen het scherpst;
+  matrix-groen als tweede accent geeft de AI-tegels hun eigen signaal;
+  amber/rood houden het mission-control-overzicht leesbaar zonder extra
+  kleur-ruis.
+- **Donker boven licht:** het palet is bewust donker (24/7-gebruik,
+  oude schermen, minder stroop voor de GPU-loze hardware).
+- Zodra het logo van Brionize binnen is, wordt gecontroleerd of de
+  logo-kleuren harmoniëren; zo niet, wordt het accent bijgesteld
+  (en dat kan ook later altijd, via het thema-bestand).
+
 ### Branding (fase 2/4)
 De naam **BrionAI26** is overal zichtbaar, vanaf het eerste scherm:
 - **Boot**: GRUB-menu en opstartscherm (splash) in BrionAI26-stijl.
@@ -18,8 +47,6 @@ De naam **BrionAI26** is overal zichtbaar, vanaf het eerste scherm:
   stable-basis)`).
 - Logo komt in `brand/logo/` (bronbestand, zie `brand/README.md`); afgeleiden
   voor boot/login/installer worden daaruit gegenereerd.
-- Nog open: **kleur van de lichtende randen** (cyan/teal of
-  matrix-groen) — wordt met Brionize vastgesteld vóór fase 2.
 
 ## Waarom Debian als basis (en niet Mint of Ubuntu)
 Een eigen Linux bouwen betekent: een bestaande, betrouwbare basis nemen,
@@ -69,9 +96,9 @@ Het hele systeem voelt als de **controlekamer uit een film**: een wand van
 hightech monitoren, glas en licht. Elk werkblad is zo'n wand — meerdere
 tegels tegelijk in beeld en tegelijk bedienbaar. Concreet:
 - **Look:** donkere achtergrond, panelen als doorschijnend **glas** met
-  dunne lichtende randen (cyan/teal of matrix-groen), monospace-
-  HUD-lettertype, subtiele "glasvezel"-lijnen. Geen standaard grijs
-  bureaublad-thema maar een HUD-overlay over alles.
+  dunne lichtende randen (cyan/teal), monospace-HUD-lettertype, subtiele
+  "glasvezel"-lijnen. Geen standaard grijs bureaublad-thema maar een
+  HUD-overlay over alles.
 - **Tegels i.p.v. zwevende vensters:** vensters vallen automatisch in een
   **raster** — modus **2×2** (grote tegels) of modus **4×4** (kleine
   tegels, echte monitorwand-look). Eén tegel kan op **PiP**-modus: één
@@ -127,7 +154,7 @@ Draait éénmalig ná installatie op de doel-pc: lokale gebruiker aanmaken,
 Gemini/Mistral) naar `~/.env`. Schakelt zichzelf na afloop uit.
 
 ## Bouwfasen
-1. **Basissysteem** — `live-build`-configuratie: Debian-basis, kernel/bootloader/netwerk, live-boot-mechanisme. *Huidige fase; eerst een bewezen minimale ISO-build.*
+1. **Basissysteem** — `live-build`-configuratie: Debian-basis, kernel/bootloader/netwerk, live-boot-mechanisme. *Bewezen: geslaagde CI-run 35845349377 (353 MB ISO).*
 2. **Desktop-laag** — XFCE dark, 3 werkbladen, Conky, tiling, hotkeys.
 3. **Devstack & apps** — zie hierboven.
 4. **Installer-integratie** — Calamares in de live-omgeving, configureren voor onze schijf-/bootloader-eisen.
@@ -136,8 +163,7 @@ Gemini/Mistral) naar `~/.env`. Schakelt zichzelf na afloop uit.
 ## CI-strategie
 - Vrijwel alles via `apt`/binaire installs, dus een volledige ISO-build
   hoort **ruim binnen tientallen minuten** op een standaard GitHub
-  Actions-runner te passen. Moet bevestigd worden door de eerste echte
-  build, niet aangenomen.
+  Actions-runner te passen. **Bevestigd:** volledige build in ~5-6 min.
 - Repo is publiek → gratis Actions-minuten tijdens de bouwfase.
 - Mocht er tóch een aangepast pakket gecompileerd moeten worden
   (zeldzaam): officiële bron eerst, checksum-verplichte fallback-keten,
@@ -156,17 +182,22 @@ Gemini/Mistral) naar `~/.env`. Schakelt zichzelf na afloop uit.
 - Exacte Calamares-configuratie voor onze schijf-/bootloader-eisen.
 - Onderverdeling gebruikersaanmaak: wat Calamares doet, wat de
   first-boot-wizard doet.
-- Fase-1-bewijs: CI-run die daadwerkelijk een ISO-artifact oplevert.
+- Logo-upload in `brand/logo/` (Brionize heeft upload gepland).
 
 ## Beslislog
+- **2026-09-23 — Kleurpalet vastgesteld (productbesluit, AI in overleg met Brionize).**
+  Missie-control-palet: achtergrond `#0A0E12`/`#131A21`, primair accent
+  cyan/teal `#00E5FF` (lichtende randen, hotkeys), secundair matrix-groen
+  `#00FF9C` (status/actieve tegels), amber/rood voor waarschuwing/fout.
+  Alle kleuren als variabelen in één thema-bestand → later altijd
+  aanpasbaar. Check tegen logo-kleuren zodra die binnen zijn.
 - **2026-09-22 — Naam vastgesteld (productbesluit, Brionize): BrionAI26.**
   De distributie heet officieel **BrionAI26** — zichtbaar op boot, login,
-  installer en in het hele systeem. Logo en accentkleur volgen nog.
+  installer en in het hele systeem.
 - **2026-09-22 — Project gestart als eigen Linux op Debian-basis.**
-  Doel: BrionAI26 — eigen distributie op basis van
-  kaalgestript Debian, met eigen inrichting (werkbladen, AI-tools,
-  devstack, wizard). Live-build + Calamares + GitHub Actions als
-  bouwomgeving.
+  Doel: BrionAI26 — eigen distributie op basis van kaalgestript Debian,
+  met eigen inrichting (werkbladen, AI-tools, devstack, wizard).
+  Live-build + Calamares + GitHub Actions als bouwomgeving.
 - **2026-09-22 — Missie-control-look vastgesteld (productbesluit, Brionize).**
   Elk werkblad wordt een "monitorwand uit films": hightech glas-panelen,
   lichtende randen, HUD-lettertype; vensters vallen automatisch in een
@@ -181,6 +212,6 @@ Gemini/Mistral) naar `~/.env`. Schakelt zichzelf na afloop uit.
   terug klein. Implementatie: focus-volgt-muis + devilspie2 focus-
   events, met korte stabilisatie-vertraging tegen geflikker; gladde
   animatie via picom. Bouwt en bewijst in fase 2.
-- **2026-09-22 — Fase 1 opgezet (nog niet bewezen).** Minimale
-  `live-build`-config (stable/amd64/iso-hybrid) met CI-workflow die de
-  ISO als artifact levert; bewijs volgt uit de eerste geslaagde CI-run.
+- **2026-09-22 — Fase 1 opgezet en bewezen.** Minimale `live-build`-config
+  (stable/amd64/iso-hybrid); CI-run 35845349377 leverde de eerste echte
+  ISO (353 MB, ~5,5 min).
