@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# BrionAI26 — fase 2 inbouw in de live-build ISO.
+# BrionAI26 — fase 2/3 inbouw in de live-build ISO.
 # Wordt door bin/build-iso aangeroepen ná lb config, vóór lb build.
 # Idempotent: veilig herhaald uit te voeren.
 
@@ -44,6 +44,24 @@ curl
 wget
 openssh-client
 EOF
+
+# 1c) VS Code — de professionele standaardeditor — via de officiële
+#     Microsoft apt-repo. Wordt in de chroot geïnstalleerd via een live-hook
+#     (netwerk is tijdens de buildfase beschikbaar in de chroot).
+#     Geany (pakketlijst hierboven) blijft als lichte reserve-editor.
+HOOKS="$CFG/config/hooks/live"
+mkdir -p "$HOOKS"
+cat > "$HOOKS/2000-install-vscode.chroot" <<'EOF'
+#!/bin/sh
+set -eu
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
+    -o /etc/apt/trusted.gpg.d/microsoft.asc
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" \
+    > /etc/apt/sources.list.d/vscode.list
+apt-get update
+apt-get install --yes --no-install-recommends code
+EOF
+chmod 0755 "$HOOKS/2000-install-vscode.chroot"
 
 # 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO, zodat
 #    elke nieuwe gebruiker de mission-control-opzet krijgt.
