@@ -3,10 +3,26 @@
 > Evidence before done: elke fase eindigt met een bewezen CI-build vóór de
 > volgende fase begint. Status-details en afspraken: zie HANDOFF.md.
 
-## Volgende stappen (na fase 2)
+## Volgende stappen (na fase 3)
 
-- Fase 3 (devstack), fase 4 (Calamares), fase 5 (first-boot wizard).
+- Fase 4 (Calamares: ISO installeert zichzelf permanent op schijf),
+  fase 5 (first-boot wizard met git-identiteit + AI-sleutels).
 - Oude testbranches op `dweedledo-wq/Vibe` opruimen (handmatig, gebruiker).
+
+## 2026-09-23 — FASE 3 BEWEZEN: Dev Studio + VS Code in ISO ✅
+
+- **CI-run 35885427596 geslaagd** (~12 min): Release
+  `iso-20260923-160937` — **1328 MB ISO** publiek downloadbaar.
+  Eerdere devstack-run: 35882563654 (11m25s, geany/git/tmux/python/node).
+- Keuze professional tooling (opdracht Brionize: "professionals, beste keuzes"):
+  - **VS Code** (`code`) via officiële Microsoft apt-repo — de standaard in
+    bedrijfsontwikkeling. Geïnstalleerd via live-hook 2000-install-vscode.chroot.
+  - **Geany** blijft geïnstalleerd als lichte reserve-editor (geen netwerk/uitbreidingen nodig).
+  - git, gitg (visueel), tmux, build-essential, python3 + pip + venv, nodejs,
+    npm, curl, wget, openssh-client.
+  - Super+E opent VS Code op Dev Studio; Super+T terminal; Geany via menu.
+- Downloads voortaan automatisch als publieke GitHub Release bij elke
+  geslaagde build (geen login nodig) — workflow-stap toegevoegd.
 
 ## 2026-09-23 — FASE 2 AF: werkbladen + AI Matrix in ISO bewezen ✅
 
@@ -32,7 +48,7 @@
   1. Run 35849002493: eerste fase-2-poging. Annotatie wees op inline-comments
      in de pakketlijst; `desktop/`-map niet gemount in de build-container.
   2. Run 35849868998: zelfde exit 123, oorzaak nog onbekend.
-  3. Run 35850710447: `gtk3-engines-xfce` verwijderd (bestaat niet in
+  3. Run 35850710447: `gtk3-engines-xfence` verwijderd (bestaat niet in
      stable) — nog steeds exit 123.
   4. Run 35852671251: log-afvang toegevoegd, maar log niet gevonden.
   5. Run 35853674950: `build/` gemount, `.build/`-structuur zichtbaar maar
@@ -45,8 +61,9 @@
   7. Fix: `conky-all` in de pakketlijst (`conky-std` + `conky-all`
      conflicteren onderling — run 35855232533 bewees dat).
   8. Run 35855421072: **volledig geslaagd** — build + verify + upload.
-- Build-tijd 738,5 MB-ISO in ~8 min: XFCE-basis is dusdanig ingebouwd dat
-  latere fases hierop voortbouwen zonder opnieuw vanaf nul te bouwen.
+- Downloads: publieke Release-publicatie toegevoegd aan de workflow nadat
+  artifact-downloads GitHub-login bleken te vereisen (gebruiker vond de
+  download niet op mobiel).
 
 ## 2026-09-22 — FASE 1 BEWEZEN: eerste ISO gebouwd in CI ✅
 
