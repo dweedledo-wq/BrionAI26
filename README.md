@@ -1,12 +1,15 @@
 # BrionAI26
+
 Eigen Linux-distributie op basis van kaalgestript Debian (stable).
 Zie BLUEPRINT.md voor de productvisie en PROGRESS.md voor het bewijslog.
 
 ## Download
+
 Nieuwste ISO: zie [Releases](https://github.com/dweedledo-wq/BrionAI26/releases)
 — publiek downloadbaar, geen account nodig. Minimaal een 4 GB USB-stick.
 
 ## Wat zit erin
+
 - Debian stable (trixie), XFCE-desktop met mission-control-look
 - 3 werkbladen + tegelwand (devilspie2) met hover-uitbreiding
 - AI Matrix: Claude / ChatGPT / Mistral / Gemini als PWA-vensters
@@ -16,6 +19,7 @@ Nieuwste ISO: zie [Releases](https://github.com/dweedledo-wq/BrionAI26/releases)
 - Boot-splash met BrionAI26-logo, gouden HUD-conky, JetBrains Mono
 
 ## Sneltoetsen
+
 | Toets | Actie |
 |---|---|
 | Super+1 | Werkblad Command Center |
@@ -29,11 +33,13 @@ Nieuwste ISO: zie [Releases](https://github.com/dweedledo-wq/BrionAI26/releases)
 | Super+T | Terminal (opent op Dev Studio) |
 
 ## Bouwen
+
 CI bouwt automatisch bij pushes naar `bin/` of `desktop/`
 (workflow: `.github/workflows/build-iso.yml`). Lokaal: `sh bin/build-iso-docker`
 (Docker vereist). Elke geslaagde build wordt gepubliceerd als Release.
 
 ## Installatie
+
 1. ISO op USB-stick schrijven (bv. met balenaEtcher of `dd`)
 2. Opstarten vanaf USB: het GRUB-menu biedt "BrionAI26 live starten"
    (default) en "BrionAI26 installeren" (start Calamares automatisch)
