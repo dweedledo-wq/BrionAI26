@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# BrionAI26 — fase 2/3 inbouw in de live-build ISO.
+# BrionAI26 — fase 2/3/4 inbouw in de live-build ISO.
 # Wordt door bin/build-iso aangeroepen ná lb config, vóór lb build.
 # Idempotent: veilig herhaald uit te voeren.
 
@@ -12,8 +12,6 @@ LOGO="$HERE/../brand/file_00000000ace471f4822c47ae84fef756.png"
 BRAND="$HERE/branding"
 
 # 1) Pakketlijst fase 2: XFCE + mission-control-onderdelen.
-#    Alleen pakketten die geverifieerd in Debian stable bestaan —
-#    conky is virtueel; conky-std en conky-all conflicteren (alleen conky-all).
 mkdir -p "$CFG/config/package-lists"
 cat > "$CFG/config/package-lists/brionai26-desktop.list.chroot" <<'EOF'
 # BrionAI26 mission-control desktop (fase 2)
@@ -50,6 +48,13 @@ wget
 openssh-client
 EOF
 
+# 1b2) Pakketlijst fase 4: Calamares installer (geverifieerd in trixie).
+cat > "$CFG/config/package-lists/brionai26-installer.list.chroot" <<'EOF'
+# BrionAI26 installer (fase 4)
+calamares
+calamares-settings-debian
+EOF
+
 # 1c) VS Code via officiële Microsoft apt-repo (live-hook in chroot).
 HOOKS="$CFG/config/hooks/live"
 mkdir -p "$HOOKS"
@@ -65,8 +70,7 @@ apt-get install --yes --no-install-recommends code
 EOF
 chmod 0755 "$HOOKS/2000-install-vscode.chroot"
 
-# 1d) BrionAI26 Plymouth-splash: thema uit bin/branding/ (aparte repo-bestanden,
-#     robuust tegen truncatie) + logo uit brand/.
+# 1d) BrionAI26 Plymouth-splash: thema uit bin/branding/ + logo uit brand/.
 PLYM="$CFG/config/includes.chroot/usr/share/plymouth/themes/brionai26"
 mkdir -p "$PLYM"
 cp "$BRAND/brionai26.plymouth" "$PLYM/brionai26.plymouth"
@@ -152,6 +156,18 @@ background=/usr/share/backgrounds/brionai26/wallpaper.png
 theme-name=Adwaita-dark
 EOF
 
+# 2d) Installer-startpictogram op de live-desktop (fase 4).
+mkdir -p "$SKEL/Desktop"
+cat > "$SKEL/Desktop/install-brionai26.desktop" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Installeer BrionAI26
+Comment=Installeer BrionAI26 permanent op deze computer
+Exec=pkexec calamares
+Icon=install
+Categories=System
+EOF
+
 # 3) Autostart: picom + conky + devilspie2 bij login
 AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-desktop.desktop"
 mkdir -p "$(dirname "$AUTO")"
@@ -163,4 +179,4 @@ Exec=sh -c 'picom --config $HOME/.config/picom/picom.conf & conky -c $HOME/.conf
 OnlyShowIn=XFCE;
 EOF
 
-echo "== fase-2/3 branding-bestanden geplaatst in $CFG =="
+echo "== fase-2/3/4 bestanden geplaatst in $CFG =="
