@@ -1,0 +1,42 @@
+#!/bin/sh
+# BrionAI26 — fase 2 inbouw in de live-build ISO.
+# Wordt door bin/build-iso aangeroepen ná lb config, vóór lb build.
+# Overwrites niets als de mappen al bestaan; idempotent.
+set -eu
+
+CFG="$1"   # live-build config-map (bv. build/)
+HERE="$(dirname "$0")"
+
+# 1) Pakketlijst fase 2: XFCE-minimum + picom + conky + devilspie2 + wmctrl
+LIST="$CFG/config/package-lists/brionai26-desktop.list.chroot"
+mkdir -p "$CFG/config/package-lists"
+cat > "$LIST" <<'EOF'
+xfce4
+xfce4-terminal
+picom
+conky
+devilspie2
+wmctrl
+lightdm
+gtk3-engines-xfce  # donkere thema-basis
+EOF
+
+# 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO, zodat
+#    elke nieuwe gebruiker de mission-control-opzet krijgt.
+if [ -d "$HERE/../desktop/skel" ]; then
+    mkdir -p "$CFG/config/includes.chroot/etc"
+    cp -r "$HERE/../desktop/skel" "$CFG/config/includes.chroot/etc/skel"
+fi
+
+# 3) Autostart: picom + conky + devilspie2 bij login
+AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-desktop.desktop"
+mkdir -p "$(dirname "$AUTO")"
+cat > "$AUTO" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=BrionAI26 Mission Control
+Exec=sh -c 'picom --config $HOME/.config/picom/picom.conf & conky -c $HOME/.config/conky/conky.conf & devilspie2 -a &'
+OnlyShowIn=XFCE;
+EOF
+
+echo "== fase-2 bestanden geplaatst in $CFG =="
