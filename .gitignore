@@ -1,0 +1,18 @@
+# Build-uitvoer
+build/
+dist/
+*.iso
+*.img
+*.sha256
+
+# live-build cache
+cache/
+
+# Lokale secrets — nooit committen (zie BLUEPRINT.md security-regels)
+.env
+.env.*
+!.env.example
+
+# OS/editor ruis
+.DS_Store
+*.swp
