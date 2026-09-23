@@ -4,11 +4,12 @@ on:
   push:
     paths:
       - 'bin/**'
+      - 'desktop/**'
       - '.github/workflows/build-iso.yml'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: build-iso
@@ -54,3 +55,14 @@ jobs:
           path: dist/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: Publish ISO as public GitHub Release
+        run: |
+          TAG="iso-$(date -u +%Y%m%d-%H%M%S)"
+          gh release create "$TAG" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "BrionAI26 ISO $TAG" \
+            --notes "Automatische build van main. Zie SHA256SUMS voor de checksum. Live-boot vanaf USB raakt de interne schijf niet aan." \
+            --latest
+        env:
+          GH_TOKEN: ${{ github.token }}
