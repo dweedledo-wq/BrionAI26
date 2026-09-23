@@ -9,7 +9,7 @@
       <property name="&lt;Super&gt;g" type="string" value="wmctrl -s 1 &amp;&amp; chromium --app=https://chat.openai.com"/>
       <property name="&lt;Super&gt;m" type="string" value="wmctrl -s 1 &amp;&amp; chromium --app=https://chat.mistral.ai"/>
       <property name="&lt;Super&gt;a" type="string" value="wmctrl -s 1 &amp;&amp; chromium --app=https://gemini.google.com"/>
-      <property name="&lt;Super&gt;e" type="string" value="wmctrl -s 2 &amp;&amp; geany"/>
+      <property name="&lt;Super&gt;e" type="string" value="wmctrl -s 2 &amp;&amp; code"/>
       <property name="&lt;Super&gt;t" type="string" value="wmctrl -s 2 &amp;&amp; xfce4-terminal"/>
       <property name="override" type="bool" value="false"/>
     </property>
