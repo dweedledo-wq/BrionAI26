@@ -5,8 +5,28 @@ set -eu
 
 export DEBIAN_FRONTEND=noninteractive
 
-apt-get update
-apt-get install --yes --no-install-recommends live-build
+# apt kan bij tijdelijke mirror-hik falen; max 3 pogingen met korte pauze.
+n=0
+until apt-get update; do
+    n=$((n+1))
+    if [ "$n" -ge 3 ]; then
+        echo "apt-get update faalde na 3 pogingen" >&2
+        exit 100
+    fi
+    echo "apt-get update poging $n faalde — opnieuw na 10s" >&2
+    sleep 10
+done
+
+n=0
+until apt-get install --yes --no-install-recommends live-build; do
+    n=$((n+1))
+    if [ "$n" -ge 3 ]; then
+        echo "apt-get install faalde na 3 pogingen" >&2
+        exit 100
+    fi
+    echo "apt-get install poging $n faalde — opnieuw na 10s" >&2
+    sleep 10
+done
 
 WORKDIR="${1:-build}"
 mkdir -p "$WORKDIR" dist
