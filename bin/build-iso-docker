@@ -9,6 +9,7 @@ IMAGE=debian:stable
 docker run --privileged --rm \
     --workdir /app \
     --volume "${PWD}/bin:/app/bin" \
+    --volume "${PWD}/desktop:/app/desktop" \
     --volume "${PWD}/dist:/app/dist" \
     "${IMAGE}" \
     /bin/bash bin/build-iso /app/build
