@@ -3,53 +3,54 @@
 > Evidence before done: elke fase eindigt met een bewezen CI-build vóór de
 > volgende fase begint. Status-details en afspraken: zie HANDOFF.md.
 
-## Volgende stappen (na fase 4)
+## Volgende stappen
 
+- Gebruiker: nieuwste ISO op USB live-booten en tegelwand + hover testen
+  (devilspie2 nog nooit op echte hardware bewezen).
+- Eerste echte Calamares-installatie op een testmachine.
 - Fase 5: first-boot wizard (git-identiteit, AI-sleutels, Tailscale).
-- Look-polish vervolg: eigen xfwm4-thema (gouden titelbalken), paneel-styling,
-  picom-blur versterken.
+- Afwerking: GRUB-menu branding, Calamares NL-teksten, README-hotkeykaart.
 - Oude testbranches op `dweedledo-wq/Vibe` opruimen (handmatig, gebruiker).
+
+## 2026-09-23 — LOOK-POLISH 2: gouden vensterdecoratie ✅
+
+- **CI-run 35898371987 geslaagd** (commit `0437438`, Release
+  `iso-20260923-175953` — 1395 MB):
+  - Eigen xfwm4-thema "BrionAI26": kopie van het kleurveranderbare
+    Default-thema, met gouden titeltekst (#F0C090) op donker, blauwgrijze
+    inactieve titels, gebouwd door live-hook 2200-build-xfwm4-theme.chroot.
+  - Skel xfwm4.xml verwijst naar thema BrionAI26 + composited redirect.
+  - Themerc en hook staan als aparte repo-bestanden in bin/branding/ (robuust
+    tegen de terugkerende content-afwijkingen bij API-pushes).
+- Blob-verificatie vóór de build ving een kapotte quote in apply-desktop
+  (regel 159) — hersteld vóór CI, run in één keer geslaagd.
 
 ## 2026-09-23 — FASE 4 BEWEZEN: Calamares installer in ISO ✅
 
 - **CI-run 35894259863 geslaagd** (commit `7525145`, ~10 min): Release
-  `iso-20260923-171843` — ISO met Calamares + "Installeer BrionAI26"
-  desktop-icoon (pkexec calamares).
-- Calamares 3.3.14 + calamares-settings-debian gegevengecheckt in trixie
-  vóór invoering (packages.debian.org).
-- Droogrun van apply-desktop bewees: installer-icoon en pakketlijst correct
-  in de skel geplaatst.
+  met Calamares + "Installeer BrionAI26" desktop-icoon (pkexec calamares).
+- Calamares 3.3.14 + calamares-settings-debian gegevengecheckt in trixie.
 
 ## 2026-09-23 — LOOK-POLISH 1: sci-fi HUD ✅
 
-- **CI-run 35896414869 geslaagd** (commit `94cf996`, Release
-  `iso-20260923-174323` — **1395 MB**):
-  - JetBrains Mono (HUD-lettertype) overal: conky, GTK (menu's/vensters).
-  - Conky-HUD geüpgradeerd: HUD-symbolen (◉ SYS/CPU/RAM/DSK/NET/BAT),
-    batterij-tegel, gestippelde gouden separators.
-- Eerste conky-push had 3 tekstafwijkingen (dubbele default_color, gap_y=2,
-  Lua-comment-syntaxis) — direct hersteld in vervolgcommit `dd85e7a` en
-  blob-geverifieerd (content-truncatie-issues bij API-pushes zijn terugkerend;
-  blob-check via git/trees is nu standaard).
+- **CI-run 35896414869 geslaagd** (Release 1395 MB): JetBrains Mono
+  overal (conky + GTK), HUD-symbolen (◉ SYS/CPU/RAM/DSK/NET/BAT),
+  batterij-tegel, gestippelde gouden separators.
 
-## 2026-09-23 — FASE 3 BEWEZEN: Dev Studio + VS Code in ISO ✅
+## 2026-09-23 — FASE 3 BEWEZEN: Dev Studio + VS Code ✅
 
-- **CI-run 35885427596 geslaagd** (~12 min): Release `iso-20260923-160937`
-  — **1328 MB ISO**. VS Code via officiële Microsoft apt-repo (live-hook),
-  Geany reserve, git/gitg/tmux/python/node/build-essential.
+- **CI-run 35885427596 geslaagd** (1328 MB): VS Code via officiële
+  Microsoft apt-repo, Geany reserve, git/gitg/tmux/python/node/npm.
 - Downloads automatisch als publieke GitHub Release (geen login nodig).
 
-## 2026-09-23 — FASE 2 AF: werkbladen + AI Matrix in ISO bewezen ✅
+## 2026-09-23 — FASE 2 AF: werkbladen + AI Matrix ✅
 
-- **CI-run 35871715186 geslaagd**: 3 werkbladen (Command Center / AI Matrix /
-  Dev Studio), Super+1/2/3 wissel, Super+C/G/M/A AI-PWA's, chromium.
-- **CI-run 35855421072** (eerste desktop-ISO 738,5 MB) na 6 falende runs:
-  log-vangnet (tee) onthulde conky-virtueel-pakket als oorzaak.
+- **CI-run 35871715186**: 3 werkbladen, Super+1/2/3, Super+C/G/M/A PWA's.
+- **CI-run 35855421072** (738,5 MB): eerste desktop-ISO, na conky-fix.
 
 ## 2026-09-22 — FASE 1 BEWEZEN ✅
 
-- **CI-run 35791024492 geslaagd** (353 MB): eerste kale basis-ISO, in
-  `dweedledo-wq/Vibe` gebouwd. Drie runs bewezen de verify-fixes.
+- **CI-run 35791024492** (353 MB): eerste kale basis-ISO.
 
 ## 2026-09-22 (start)
 
