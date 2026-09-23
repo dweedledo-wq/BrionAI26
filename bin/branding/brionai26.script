@@ -1,0 +1,29 @@
+# BrionAI26 boot splash: donker paneel, gouden laadbalk onder het logo.
+screen_width = Window.GetWidth();
+screen_height = Window.GetHeight();
+background = Image.New(screen_width, screen_height);
+background.SetColor(0.039, 0.055, 0.070);
+background_sprite = Sprite.New();
+background_sprite.SetImage(background);
+background_sprite.SetPosition(0, 0, -10000);
+logo = Image("logo.png");
+logo_sprite = Sprite.New();
+logo_sprite.SetImage(logo);
+logo_sprite.SetPosition(screen_width / 2 - logo.GetWidth() / 2, screen_height / 2 - logo.GetHeight() / 2);
+bar_width = screen_width * 0.20;
+bar_x = screen_width / 2 - bar_width / 2;
+bar_y = screen_height / 2 + logo.GetHeight() / 2 + 40;
+bar_track = Image.New(bar_width, 3);
+bar_track.SetColor(0.10, 0.13, 0.16);
+bar_track_sprite = Sprite.New();
+bar_track_sprite.SetImage(bar_track);
+bar_track_sprite.SetPosition(bar_x, bar_y);
+bar_fill_sprite = Sprite.New();
+fun refresh_callback(time) {
+    progress = Plymouth.GetBootProgress();
+    fill = Image.New(bar_width * progress, 3);
+    fill.SetColor(0.847, 0.659, 0.471);
+    bar_fill_sprite.SetImage(fill);
+    bar_fill_sprite.SetPosition(bar_x, bar_y);
+}
+Plymouth.SetRefreshFunction(refresh_callback);
