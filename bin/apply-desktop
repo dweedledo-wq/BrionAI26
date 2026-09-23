@@ -26,6 +26,25 @@ chromium
 lightdm
 EOF
 
+# 1b) Pakketlijst fase 3: Dev Studio-devstack — professional tooling in
+#     officiële Debian stable-repo's, licht genoeg voor hardware zonder GPU.
+cat > "$CFG/config/package-lists/brionai26-devstudio.list.chroot" <<'EOF'
+# BrionAI26 Dev Studio (fase 3)
+geany
+git
+gitg
+tmux
+build-essential
+python3
+python3-pip
+python3-venv
+nodejs
+npm
+curl
+wget
+openssh-client
+EOF
+
 # 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO, zodat
 #    elke nieuwe gebruiker de mission-control-opzet krijgt.
 if [ -d "$HERE/../desktop/skel" ]; then
@@ -48,4 +67,4 @@ Exec=sh -c 'picom --config $HOME/.config/picom/picom.conf & conky -c $HOME/.conf
 OnlyShowIn=XFCE;
 EOF
 
-echo "== fase-2 bestanden geplaatst in $CFG =="
+echo "== fase-2/3 bestanden geplaatst in $CFG =="
