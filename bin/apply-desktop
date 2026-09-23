@@ -30,14 +30,14 @@ EOF
 if [ -d "$HERE/../desktop/skel" ]; then
     mkdir -p "$CFG/config/includes.chroot/etc"
     cp -r "$HERE/../desktop/skel" "$CFG/config/includes.chroot/etc/skel"
-       echo "== skel geplaatst: $(find "$CFG/config/includes.chroot/etc/skel" -type f | wc -l) bestanden =="
+    echo "== skel geplaatst: $(find "$CFG/config/includes.chroot/etc/skel" -type f | wc -l) bestanden =="
 else
     echo "WAARSCHUWING: desktop/skel niet gevonden — desktop wordt NIET meegebouwd" >&2
     exit 3
 fi
 
 # 3) Autostart: picom + conky + devilspie2 bij login
-AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai-fiche.desktop"
+AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-desktop.desktop"
 mkdir -p "$(dirname "$AUTO")"
 cat > "$AUTO" <<'EOF'
 [Desktop Entry]
