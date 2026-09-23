@@ -1,16 +1,17 @@
 #!/bin/sh
 # BrionAI26 — fase 2 inbouw in de live-build ISO.
 # Wordt door bin/build-iso aangeroepen ná lb config, vóór lb build.
-# Overwrites niets als de mappen al bestaan; idempotent.
+# Idempotent: veilig herhaald uit te voeren.
 set -eu
 
 CFG="$1"   # live-build config-map (bv. build/)
 HERE="$(dirname "$0")"
 
 # 1) Pakketlijst fase 2: XFCE-minimum + picom + conky + devilspie2 + wmctrl
-LIST="$CFG/config/package-lists/brionai26-desktop.list.chroot"
+#    Let op: géén inline-comments — apt leest elke regel als pakketnaam.
 mkdir -p "$CFG/config/package-lists"
-cat > "$LIST" <<'EOF'
+cat > "$CFG/config/package-lists/brionai26-desktop.list.chroot" <<'EOF'
+# BrionAI26 mission-control desktop (fase 2)
 xfce4
 xfce4-terminal
 picom
@@ -18,7 +19,7 @@ conky
 devilspie2
 wmctrl
 lightdm
-gtk3-engines-xfce  # donkere thema-basis
+gtk3-engines-xfce
 EOF
 
 # 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO, zodat
@@ -26,6 +27,10 @@ EOF
 if [ -d "$HERE/../desktop/skel" ]; then
     mkdir -p "$CFG/config/includes.chroot/etc"
     cp -r "$HERE/../desktop/skel" "$CFG/config/includes.chroot/etc/skel"
+    echo "== skel geplaatst: $(find "$CFG/config/includes.chroot/etc/skel" -type f | wc -l) bestanden =="
+else
+    echo "WAARSCHUWING: desktop/skel niet gevonden — desktop wordt NIET meegebouwd" >&2
+    exit 3
 fi
 
 # 3) Autostart: picom + conky + devilspie2 bij login
