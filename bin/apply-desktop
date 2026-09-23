@@ -28,6 +28,7 @@ plymouth
 plymouth-themes
 gnome-themes-extra
 adwaita-icon-theme
+fonts-jetbrains-mono
 EOF
 
 # 1b) Pakketlijst fase 3: Dev Studio-devstack.
@@ -145,7 +146,7 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
     <property name="IconThemeName" type="string" value="Adwaita"/>
   </property>
   <property name="Gtk" type="empty">
-    <property name="FontName" type="string" value="Sans 10"/>
+    <property name="FontName" type="string" value="JetBrains Mono 10"/>
   </property>
 </channel>
 EOF
