@@ -11,15 +11,14 @@ HERE="$(dirname "$0")"
 
 # 1) Pakketlijst fase 2: XFCE + mission-control-onderdelen.
 #    Alleen pakketten die geverifieerd in Debian stable bestaan —
-#    gtk3-engines-xfce bestaat niet meer in stable en brak de build (exit 123);
-#    conky is in stable een virtueel pakket, conky-std is de echte provider.
+#    gtk3-engines-xfce bestaat niet meer in stable; conky is virtueel;
+#    conky-std en conky-all conflicteren, dus alleen conky-all.
 mkdir -p "$CFG/config/package-lists"
 cat > "$CFG/config/package-lists/brionai26-desktop.list.chroot" <<'EOF'
 # BrionAI26 mission-control desktop (fase 2)
 xfce4
 xfce4-terminal
 picom
-conky-std
 conky-all
 devilspie2
 wmctrl
@@ -31,14 +30,14 @@ EOF
 if [ -d "$HERE/../desktop/skel" ]; then
     mkdir -p "$CFG/config/includes.chroot/etc"
     cp -r "$HERE/../desktop/skel" "$CFG/config/includes.chroot/etc/skel"
-    echo "== skel geplaatst: $(find "$CFG/config/includes.chroot/etc/skel" -type f | wc -l) bestanden =="
+       echo "== skel geplaatst: $(find "$CFG/config/includes.chroot/etc/skel" -type f | wc -l) bestanden =="
 else
     echo "WAARSCHUWING: desktop/skel niet gevonden — desktop wordt NIET meegebouwd" >&2
     exit 3
 fi
 
 # 3) Autostart: picom + conky + devilspie2 bij login
-AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-desktop.desktop"
+AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai-fiche.desktop"
 mkdir -p "$(dirname "$AUTO")"
 cat > "$AUTO" <<'EOF'
 [Desktop Entry]
