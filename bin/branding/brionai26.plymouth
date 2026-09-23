@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=BrionAI26
+Description=BrionAI26 Mission Control boot splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/brionai26
+ScriptFile=/usr/share/plymouth/themes/brionai26/brionai26.script
