@@ -6,11 +6,30 @@
 ## Volgende stappen
 
 1. GRUB-bootmenu met aparte opties "BrionAI26 live starten" en "BrionAI26
-   installeren".
+   installeren" — gebouwd, bewijs via CI-build nog te leveren.
 2. SysDash-PWA (sysdash-brionize, private repo) als Command Center-tegel
    i.p.v. Conky-HUD.
 3. Live-test nieuwste ISO.
 4. Calamares-installatie → v1.0-tag.
+
+## 2026-09-23 — GRUB-bootmenu (taak 1): ingebouwd, CI-bewijs volgt
+
+- Eigen `config/bootloaders/grub-pc/grub.cfg` (officiële live-build
+  override-route): menu-opties "BrionAI26 live starten" (default, hotkey l)
+  en "BrionAI26 installeren" (hotkey i) + submenu met fail-safe,
+  integriteitscontrole en UEFI-settings.
+- "BrionAI26 installeren" zet `brionai26.install=1` op de kernel-cmdline;
+  autostart-wrapper `brionai26-install-mode` start dan na de live-login
+  `calamares-install-debian` (Debian-wrapper: fstab-backup + pkexec).
+- `lb config --bootloaders "grub-pc,grub-efi"`: BIOS-default van
+  live-build is syslinux — nu tonen BIOS én UEFI hetzelfde GRUB-menu.
+- `sudo` toegevoegd aan de desktop-pakketlijst: zonder sudo geeft
+  live-config de live-gebruiker geen NOPASSWD-sudo + polkit-YES, waarmee
+  pkexec (Calamares) in de live-sessie zou blokkeren.
+- First-boot wizard start niet meer in de live-sessie (check op
+  `boot=live` op de kernel-cmdline): alleen op de geïnstalleerde pc.
+- Droogrun + lokale simulatie van binary_grub_cfg bewezen: menu correct
+  gegenereerd met alle placeholders gevuld; CI-build = het eindbewijs.
 
 ## 2026-09-23 — FASE 5 BEWEZEN: first-boot wizard ✅
 
