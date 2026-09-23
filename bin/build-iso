@@ -1,6 +1,8 @@
 #!/bin/sh
+
 # Draait binnen een privileged debian:stable container (zie bin/build-iso-docker).
 # Bouwt de BrionAI26 ISO: fase 1 (basis) + fase 2 (mission-control desktop).
+
 set -eu
 
 export DEBIAN_FRONTEND=noninteractive
@@ -46,7 +48,14 @@ if [ -x /app/bin/apply-desktop ] || [ -f /app/bin/apply-desktop ]; then
     sh /app/bin/apply-desktop "$(pwd)"
 fi
 
-lb build
+# lb build logt naar stdout; tee vangt alles op in live-build.log zodat de
+# workflow het log bij faal kan uitlezen (build/ is in de container gemount).
+lb build 2>&1 | tee live-build.log
+RC="${PIPESTATUS:-}"
+if [ -n "$RC" ] && [ "$RC" != "0" ]; then
+    echo "lb build faalde met exit $RC" >&2
+    exit "$RC"
+fi
 
 mv live-image-amd64.hybrid.iso ../dist/brionai26-amd64.hybrid.iso
 
