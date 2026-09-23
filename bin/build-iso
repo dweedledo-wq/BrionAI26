@@ -1,6 +1,6 @@
 #!/bin/sh
 # Draait binnen een privileged debian:stable container (zie bin/build-iso-docker).
-# Bouwt een minimaal kaal basissysteem-ISO (fase 1 uit BLUEPRINT.md) als eerste bewijs.
+# Bouwt de BrionAI26 ISO: fase 1 (basis) + fase 2 (mission-control desktop).
 set -eu
 
 export DEBIAN_FRONTEND=noninteractive
@@ -32,7 +32,7 @@ WORKDIR="${1:-build}"
 mkdir -p "$WORKDIR" dist
 cd "$WORKDIR"
 
-# Minimale configuratie: Debian stable, amd64, iso-hybrid, geen desktop (fase 1).
+# Minimale configuratie: Debian stable, amd64, iso-hybrid.
 lb config \
     --distribution stable \
     --architecture amd64 \
@@ -40,6 +40,11 @@ lb config \
     --archive-areas "main" \
     --debian-installer none \
     --checksums sha256
+
+# Fase 2: mission-control desktop inbouwen (pakketten + skel + autostart)
+if [ -x /app/bin/apply-desktop ] || [ -f /app/bin/apply-desktop ]; then
+    sh /app/bin/apply-desktop "$(pwd)"
+fi
 
 lb build
 
