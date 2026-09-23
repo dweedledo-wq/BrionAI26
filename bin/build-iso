@@ -1,0 +1,34 @@
+#!/bin/sh
+# Draait binnen een privileged debian:stable container (zie bin/build-iso-docker).
+# Bouwt een minimaal kaal basissysteem-ISO (fase 1 uit BLUEPRINT.md) als eerste bewijs.
+set -eu
+
+export DEBIAN_FRONTEND=noninteractive
+
+apt-get update
+apt-get install --yes --no-install-recommends live-build
+
+WORKDIR="${1:-build}"
+mkdir -p "$WORKDIR" dist
+cd "$WORKDIR"
+
+# Minimale configuratie: Debian stable, amd64, iso-hybrid, geen desktop (fase 1).
+lb config \
+    --distribution stable \
+    --architecture amd64 \
+    --binary-images iso-hybrid \
+    --archive-areas "main" \
+    --debian-installer none \
+    --checksums sha256
+
+lb build
+
+mv live-image-amd64.hybrid.iso ../dist/brionai26-amd64.hybrid.iso
+
+echo "== ISO SHA256 =="
+cd ../dist
+sha256sum brionai26-amd64.hybrid.iso | tee SHA256SUMS
+cd -
+
+echo "== Build voltooid =="
+ls -lah ../dist/
