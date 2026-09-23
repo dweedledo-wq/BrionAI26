@@ -132,7 +132,7 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" <<'EOF'
 </channel>
 EOF
 
-# 2c) Donkere look: GTK-thema, xfwm4-decoratie en LightDM-greeter.
+# 2c) Donkere look: GTK-thema + LightDM-greeter met wallpaper.
 cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xsettings" version="1.0">
@@ -142,15 +142,6 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
   </property>
   <property name="Gtk" type="empty">
     <property name="FontName" type="string" value="Sans 10"/>
-  </property>
-</channel>
-EOF
-cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4-theme.xml" <<'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<channel name="xfwm4" version="1.0">
-  <property name="general" type="empty">
-    <property name="theme" type="string" value="Default-4.6"/>
-    <property name="show_dock_shadow" type="bool" value="false"/>
   </property>
 </channel>
 EOF
