@@ -41,6 +41,8 @@ CI bouwt automatisch bij pushes naar `bin/` of `desktop/`
 ## Installatie
 
 1. ISO op USB-stick schrijven (bv. met balenaEtcher of `dd`)
-2. Live-booten en testen — raakt de interne schijf niet aan
-3. Dubbelklik "Installeer BrionAI26" om permanent te installeren
-4. Eerste login: first-boot wizard start automatisch
+2. Opstarten vanaf USB: het GRUB-menu biedt "BrionAI26 live starten"
+   (default) en "BrionAI26 installeren" (start Calamares automatisch)
+3. Live-booten en testen — raakt de interne schijf niet aan
+4. Dubbelklik "Installeer BrionAI26" om permanent te installeren
+5. Eerste login: first-boot wizard start automatisch

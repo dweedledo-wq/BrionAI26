@@ -176,6 +176,25 @@ Gemini/Mistral) naar `~/.env`. Schakelt zichzelf na afloop uit.
   (`.gitignore`).
 - Geen API-keys of tokens in build-configuratie/CI-workflow-bestanden.
 
+## Human in the loop bij CLI-toegang (grondregel, vastgesteld door Brionize)
+
+Van toepassing op AI met CLI/terminal-toegang bínnen BrionAI26: als we
+AI-tools (Claude, ChatGPT, Mistral, Gemini) op de geïnstalleerde pc
+terminal-toegang geven, blijft de mens (Brionize) de CEO/dirigent: het
+laatste besluit ligt altijd bij de mens. De AI mag voorstellen en
+uitvoeren wat is goedgekeurd, maar niets blijvends, externs of
+publicerends zonder menselijke eindbeslissing. Deze regel gaat
+specifiek over AI-in-het-systeem en vervangt niet de bestaande
+werkwijze van het bouwproject zelf (zie HANDOFF.md).
+
+## API's & sleutels (fase 3/5)
+
+Alle benodigde API's staan in `.env.example` (placeholders, geen waarden).
+- AI-assistenten (ANTHROPIC/OPENAI/GEMINI/MISTRAL) — via de first-boot-wizard.
+- Infrastructuur (Tailscale, GitHub, Supabase, Cloudflare, n8n) — bewust
+  via interactieve CLI-login (tailscale up, gh auth login, supabase login,
+  cloudflared tunnel login): geen geheimen op schijf, geen limieten.
+
 ## Wat nog open staat
 - Pakketlijsten/hooks voor desktop-laag (fase 2) en devstack (fase 3) nog
   uitwerken.
@@ -185,6 +204,10 @@ Gemini/Mistral) naar `~/.env`. Schakelt zichzelf na afloop uit.
 - Logo-upload in `brand/logo/` (Brionize heeft upload gepland).
 
 ## Beslislog
+- **2026-09-23 — Human-in-the-loop bij CLI-toegang vastgesteld (productbesluit, Brionize).**
+  Grondregel: bij AI met CLI/terminal-toegang bínnen BrionAI26 blijft de
+  mens altijd de CEO/dirigent — niets blijvends, externs of publicerends
+  zonder menselijke eindbeslissing (details in de gelijknamige sectie).
 - **2026-09-23 — Kleurpalet vastgesteld (productbesluit, AI in overleg met Brionize).**
   Missie-control-palet: achtergrond `#0A0E12`/`#131A21`, primair accent
   cyan/teal `#00E5FF` (lichtende randen, hotkeys), secundair matrix-groen

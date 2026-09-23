@@ -39,6 +39,7 @@ lb config \
     --distribution stable \
     --architecture amd64 \
     --binary-images iso-hybrid \
+    --bootloaders "grub-pc,grub-efi" \
     --archive-areas "main" \
     --debian-installer none \
     --checksums sha256

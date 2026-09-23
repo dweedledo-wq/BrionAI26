@@ -5,6 +5,12 @@
 
 set -eu
 
+# Alleen op de geïnstalleerde doel-pc: in de live-sessie (ook in de
+# GRUB-install-modus) staat boot=live op de kernel-cmdline — dan niet draaien.
+if grep -qs 'boot=live' /proc/cmdline; then
+    exit 0
+fi
+
 MARK="$HOME/.config/brionai26-wizard-done"
 
 if [ -f "$MARK" ]; then

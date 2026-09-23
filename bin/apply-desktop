@@ -29,6 +29,7 @@ plymouth-themes
 gnome-themes-extra
 adwaita-icon-theme
 fonts-jetbrains-mono
+sudo
 EOF
 
 # 1b) Pakketlijst fase 3: Dev Studio-devstack.
@@ -121,6 +122,75 @@ mkdir -p "$CFG/config/includes.chroot/etc/default/grub.d"
 cat > "$CFG/config/includes.chroot/etc/default/grub.d/brionai26.cfg" <<'EOF'
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
 GRUB_DISTRIBUTOR="BrionAI26"
+EOF
+
+# 1f2) GRUB-bootmenu (taak 1): aparte opties "live starten" en "installeren".
+# binary_grub_cfg kopieert eerst de live-build-templates en legt daarna de
+# eigen bestanden uit config/bootloaders/grub-pc/ eroverheen; de @PLACEHOLDERS@
+# worden daarna door live-build in alle .cfg's gesubstitueerd.
+GRUBMENU="$CFG/config/bootloaders/grub-pc"
+mkdir -p "$GRUBMENU"
+cat > "$GRUBMENU/grub.cfg" <<'EOF'
+source /boot/grub/config.cfg
+
+set default=0
+set timeout=10
+
+menuentry "BrionAI26 live starten" --hotkey=l {
+	linux	@KERNEL_LIVE@ @APPEND_LIVE@
+	initrd	@INITRD_LIVE@
+}
+
+menuentry "BrionAI26 installeren" --hotkey=i {
+	linux	@KERNEL_LIVE@ @APPEND_LIVE@ brionai26.install=1
+	initrd	@INITRD_LIVE@
+}
+
+submenu 'Geavanceerde opties ...' --hotkey=u {
+	source /boot/grub/theme.cfg
+	menuentry "BrionAI26 live starten (fail-safe modus)" --hotkey=f {
+		linux	@KERNEL_LIVE@ @LB_BOOTAPPEND_LIVE_FAILSAFE@
+		initrd	@INITRD_LIVE@
+	}
+	if @ENABLE_VERIFY_CHECKSUMS@; then
+		menuentry "Controleer integriteit van het boot-medium" --hotkey=v {
+			linux	@KERNEL_LIVE@ @APPEND_VERIFY_CHECKSUMS@
+			initrd	@INITRD_LIVE@
+		}
+	fi
+	if [ "${grub_platform}" = "efi" ]; then
+		menuentry "UEFI Firmware Settings" --hotkey=w {
+			fwsetup
+		}
+	fi
+}
+EOF
+
+# 1f3) Install-modus: autostart-wrapper die Calamares start als de GRUB-optie
+# "BrionAI26 installeren" gekozen was (brionai26.install=1 op de kernel-cmdline).
+# calamares-install-debian (Debian-wrapper) regelt fstab-backup + wachtwoordloze
+# pkexec (live-config geeft de live-gebruiker NOPASSWD-sudo + polkit-YES).
+mkdir -p "$CFG/config/includes.chroot/usr/bin"
+cat > "$CFG/config/includes.chroot/usr/bin/brionai26-install-mode" <<'EOF'
+#!/bin/sh
+# Start Calamares automatisch na de live-login als voor het booten voor
+# "BrionAI26 installeren" is gekozen; anders direct weer uit.
+if ! grep -qs 'brionai26.install=1' /proc/cmdline; then
+    exit 0
+fi
+# Kort laten settelen: paneel + achtergrond eerst, dan de installer.
+sleep 5
+exec calamares-install-debian
+EOF
+chmod 0755 "$CFG/config/includes.chroot/usr/bin/brionai26-install-mode"
+INSTALL_AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-install-mode.desktop"
+mkdir -p "$(dirname "$INSTALL_AUTO")"
+cat > "$INSTALL_AUTO" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=BrionAI26 Installer Autostart
+Exec=/usr/bin/brionai26-install-mode
+OnlyShowIn=XFCE;
 EOF
 
 # 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO.
