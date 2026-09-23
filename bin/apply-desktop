@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# BrionAI26 — fase 2/3/4 inbouw in de live-build ISO.
+# BrionAI26 — fase 2/3/4/5 inbouw in de live-build ISO.
 # Wordt door bin/build-iso aangeroepen ná lb config, vóór lb build.
 # Idempotent: veilig herhaald uit te voeren.
 
@@ -56,6 +56,12 @@ calamares
 calamares-settings-debian
 EOF
 
+# 1b3) Pakketlijst fase 5: first-boot wizard.
+cat > "$CFG/config/package-lists/brionai26-wizard.list.chroot" <<'EOF'
+# BrionAI26 first-boot wizard (fase 5)
+zenity
+EOF
+
 # 1c) VS Code via officiële Microsoft apt-repo (live-hook in chroot).
 HOOKS="$CFG/config/hooks/live"
 mkdir -p "$HOOKS"
@@ -96,10 +102,23 @@ cp "$BRAND/xfwm4-themerc" "$CFG/config/includes.chroot/usr/share/brionai26/xfwm4
 cp "$BRAND/build-xfwm4-theme.chroot" "$HOOKS/2200-build-xfwm4-theme.chroot"
 chmod 0755 "$HOOKS/2200-build-xfwm4-theme.chroot"
 
-# 1f) GRUB: quiet splash zodat Plymouth de boot toont.
+# 1e3) First-boot wizard (fase 5): script + autostart-entry.
+cp "$BRAND/firstboot-wizard.sh" "$CFG/config/includes.chroot/usr/bin/brionai26-firstboot"
+chmod 0755 "$CFG/config/includes.chroot/usr/bin/brionai26-firstboot"
+WIZARD_AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-firstboot.desktop"
+cat > "$WIZARD_AUTO" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=BrionAI26 First-Boot Wizard
+Exec=/usr/bin/brionai26-firstboot
+OnlyShowIn=XFCE;
+EOF
+
+# 1f) GRUB: quiet splash + BrionAI26-menu-tekst.
 mkdir -p "$CFG/config/includes.chroot/etc/default/grub.d"
 cat > "$CFG/config/includes.chroot/etc/default/grub.d/brionai26.cfg" <<'EOF'
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+GRUB_DISTRIBUTOR="BrionAI26"
 EOF
 
 # 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO.
@@ -186,4 +205,4 @@ Exec=sh -c 'picom --config $HOME/.config/picom/picom.conf & conky -c $HOME/.conf
 OnlyShowIn=XFCE;
 EOF
 
-echo "== fase-2/3/4 bestanden geplaatst in $CFG =="
+echo "== fase-2/3/4/5 bestanden geplaatst in $CFG =="
