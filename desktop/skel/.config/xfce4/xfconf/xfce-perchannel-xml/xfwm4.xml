@@ -8,5 +8,7 @@
       <value type="string" value="Dev Studio"/>
     </property>
     <property name="wrap_workspaces" type="bool" value="true"/>
+    <property name="theme" type="string" value="BrionAI26"/>
+    <property name="use_composited_redirect" type="bool" value="true"/>
   </property>
 </channel>
