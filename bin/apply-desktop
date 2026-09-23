@@ -7,8 +7,9 @@ set -eu
 CFG="$1"   # live-build config-map (bv. build/)
 HERE="$(dirname "$0")"
 
-# 1) Pakketlijst fase 2: XFCE-minimum + picom + conky + devilspie2 + wmctrl
-#    Let op: géén inline-comments — apt leest elke regel als pakketnaam.
+# 1) Pakketlijst fase 2: XFCE + mission-control-onderdelen.
+#    Alleen pakketten die geverifieerd in Debian stable bestaan —
+#    gtk3-engines-xfce bestaat niet meer in stable en brak de build (exit 123).
 mkdir -p "$CFG/config/package-lists"
 cat > "$CFG/config/package-lists/brionai26-desktop.list.chroot" <<'EOF'
 # BrionAI26 mission-control desktop (fase 2)
@@ -19,7 +20,6 @@ conky
 devilspie2
 wmctrl
 lightdm
-gtk3-engines-xfce
 EOF
 
 # 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO, zodat
