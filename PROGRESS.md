@@ -5,12 +5,23 @@
 
 ## Volgende stappen (na fase 2)
 
-- XFCE-werkbladen (Super+1 Command Center / Super+2 AI Matrix / Super+3 Dev
-  Studio) configureren in de skel.
-- AI Matrix PWA-snelkoppelingen (Claude/ChatGPT/Mistral/Gemini) met
-  hotkeys Super+C/G/M/A.
 - Fase 3 (devstack), fase 4 (Calamares), fase 5 (first-boot wizard).
 - Oude testbranches op `dweedledo-wq/Vibe` opruimen (handmatig, gebruiker).
+
+## 2026-09-23 — FASE 2 AF: werkbladen + AI Matrix in ISO bewezen ✅
+
+- **CI-run 35871715186 geslaagd** (commit `871bb87`, ~8 min bouwtijd):
+  `brionai26-amd64.hybrid.iso` — **888,8 MB artifact** (14 dagen bewaard).
+- Toegevoegd in deze build:
+  - `desktop/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml` —
+    3 werkbladen: Command Center / AI Matrix / Dev Studio.
+  - `desktop/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml` —
+    Super+1/2/3 wisselt werkblad; Super+C/G/M/A opent Claude/ChatGPT/
+    Mistral/Gemini als PWA (chromium --app) op werkblad AI Matrix.
+  - `chromium` in de pakketlijst (geverifieerd aanwezig in trixie).
+- Opzet: XFCE leest de xfconf-XML's uit /etc/skel bij eerste login van een
+  nieuwe gebruiker; wmctrl (al aanwezig) doet de werkblad-wissel in de
+  shortcuts zodat geen extra tooling nodig is.
 
 ## 2026-09-23 — FASE 2 BEWEZEN: desktop-ISO gebouwd in CI ✅
 
@@ -45,7 +56,7 @@
   thuisbasis, inmiddels vervangen door deze repo).
 - Bewijs leverde drie runs (vaste "evidence before done"-discipline):
   1. Run 35789362236: ISO gebouwd, maar verify faalde — SHA256SUMS bevatte
-     pad `../dist/…` dat niet matchde bij de check. Fix: checksum binnen
+     pad `../dist/…` dat niet matchte bij de check. Fix: checksum binnen
      `dist/` genereren met bare bestandsnaam.
   2. Run 35790137048: opnieuw verify-faal — de check draaide vanuit
      repo-root. Fix: `cd dist && sha256sum --check SHA256SUMS`.
