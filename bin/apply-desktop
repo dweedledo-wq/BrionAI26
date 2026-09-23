@@ -49,7 +49,7 @@ wget
 openssh-client
 EOF
 
-# 1b2) Pakketlijst fase 4: Calamares installer (geverifieerd in trixie).
+# 1b2) Pakketlijst fase 4: Calamares installer.
 cat > "$CFG/config/package-lists/brionai26-installer.list.chroot" <<'EOF'
 # BrionAI26 installer (fase 4)
 calamares
@@ -82,13 +82,19 @@ else
     echo "WAARSCHUWING: brand-logo niet gevonden — splash zonder logo" >&2
 fi
 
-# 1e) Plymouth-thema activeren via live-hook (thema is dan geïnstalleerd).
+# 1e) Plymouth-thema activeren via live-hook.
 cat > "$HOOKS/2100-set-plymouth-theme.chroot" <<'EOF'
 #!/bin/sh
 set -eu
 plymouth-set-default-theme brionai26
 EOF
 chmod 0755 "$HOOKS/2100-set-plymouth-theme.chroot"
+
+# 1e2) xfwm4-thema BrionAI26: themerc + hook uit bin/branding/.
+mkdir -p "$CFG/config/includes.chroot/usr/share/brionai26"
+cp "$BRAND/xfwm4-themerc" "$CFG/config/includes.chroot/usr/share/brionai26/xfwm4-themerc"
+cp "$BRAND/build-xfwm4-theme.chroot" "$HOOKS/2200-build-xfwm4-theme.chroot"
+chmod 0755 "$HOOKS/2200-build-xfwm4-theme.chroot"
 
 # 1f) GRUB: quiet splash zodat Plymouth de boot toont.
 mkdir -p "$CFG/config/includes.chroot/etc/default/grub.d"
@@ -150,7 +156,7 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
   </property>
 </channel>
 EOF
-mkdir -p "$CFG/config/includes.chroot/etc/lightdm"
+mkdir -p "$CFG/config/includes.chroot/etc/lightdm
 cat > "$CFG/config/includes.chroot/etc/lightdm/lightdm-gtk-greeter.conf" <<'EOF'
 [greeter]
 background=/usr/share/backgrounds/brionai26/wallpaper.png
