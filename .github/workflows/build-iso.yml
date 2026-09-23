@@ -26,11 +26,17 @@ jobs:
         run: |
           sh bin/build-iso-docker || BUILD_RC=$?
           if [ "${BUILD_RC:-0}" -ne 0 ]; then
-            echo "== BUILD GEFAALD (exit $BUILD_RC) — laatste 80 regels live-build-log: =="
+            echo "== BUILD GEFAALD (exit $BUILD_RC) — laatste regels live-build-log: =="
             docker run --privileged --rm \
               --volume "${PWD}/build:/app/build" \
               debian:stable \
-              sh -c 'tail -80 /app/build/live-build.log 2>/dev/null || find /app/build -name "*.log" -exec tail -40 {} \; 2>/dev/null || echo "geen log gevonden"'
+              sh -c 'tail -120 /app/build/live-build.log 2>/dev/null || find /app/build -maxdepth 2 -type f | head -30' > /tmp/fail.log 2>&1
+            # Fout zichtbaar maken in de check-run-annotatie (API-leesbaar)
+            {
+              echo "BUILD-FAIL exit=$BUILD_RC"
+              tail -c 600 /tmp/fail.log | tr '\n' '|'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::BUILD-FAIL exit=$BUILD_RC $(tail -c 400 /tmp/fail.log | tr '\n' ' ')"
             exit $BUILD_RC
           fi
 
