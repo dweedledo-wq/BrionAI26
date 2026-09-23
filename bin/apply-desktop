@@ -8,11 +8,11 @@ set -eu
 
 CFG="$1"   # live-build config-map (bv. build/)
 HERE="$(dirname "$0")"
+LOGO="$HERE/../brand/file_00000000ace471f4822c47ae84fef756.png"
 
 # 1) Pakketlijst fase 2: XFCE + mission-control-onderdelen.
 #    Alleen pakketten die geverifieerd in Debian stable bestaan —
-#    gtk3-engines-xfce bestaat niet meer in stable; conky is virtueel;
-#    conky-std en conky-all conflicteren, dus alleen conky-all.
+#    conky is virtueel; conky-std en conky-all conflicteren (alleen conky-all).
 mkdir -p "$CFG/config/package-lists"
 cat > "$CFG/config/package-lists/brionai26-desktop.list.chroot" <<'EOF'
 # BrionAI26 mission-control desktop (fase 2)
@@ -27,11 +27,11 @@ lightdm
 lightdm-gtk-greeter
 plymouth
 plymouth-themes
-dmz-cursor-theme
+gnome-themes-extra
+adwaita-icon-theme
 EOF
 
-# 1b) Pakketlijst fase 3: Dev Studio-devstack — professional tooling in
-#     officiële Debian stable-repo's, licht genoeg voor hardware zonder GPU.
+# 1b) Pakketlijst fase 3: Dev Studio-devstack.
 cat > "$CFG/config/package-lists/brionai26-devstudio.list.chroot" <<'EOF'
 # BrionAI26 Dev Studio (fase 3)
 geany
@@ -49,10 +49,7 @@ wget
 openssh-client
 EOF
 
-# 1c) VS Code — de professionele standaardeditor — via de officiële
-#     Microsoft apt-repo. Wordt in de chroot geïnstalleerd via een live-hook
-#     (netwerk is tijdens de buildfase beschikbaar in de chroot).
-#     Geany (pakketlijst hierboven) blijft als lichte reserve-editor.
+# 1c) VS Code via officiële Microsoft apt-repo (live-hook in chroot).
 HOOKS="$CFG/config/hooks/live"
 mkdir -p "$HOOKS"
 cat > "$HOOKS/2000-install-vscode.chroot" <<'EOF'
@@ -67,10 +64,16 @@ apt-get install --yes --no-install-recommends code
 EOF
 chmod 0755 "$HOOKS/2000-install-vscode.chroot"
 
-# 1d) BrionAI26-brandscherm (Plymouth): donkere splash met gouden logo-tekst.
-#     Script-templating (eerder in deze script-run geplaatst).
-mkdir -p "$CFG/config/includes.chroot/usr/share/plymouth/themes/brionai26"
-cat > "$CFG/config/includes.chroot/usr/share/plymouth/themes/brionai26/brionai26.plymouth" <<'EOF'
+# 1d) BrionAI26 Plymouth-splash (script-thema): donkere achtergrond,
+#     gouden laadbalk, logo gecentreerd. Logo komt uit brand/ (geüpload door Brionize).
+PLYM="$CFG/config/includes.chroot/usr/share/plymouth/themes/brionai26"
+mkdir -p "$PLYM"
+if [ -f "$LOGO" ]; then
+    cp "$LOGO" "$PLYM/logo.png"
+else
+    echo "WAARSCHUWING: brand-logo niet gevonden — splash zonder logo" >&2
+fi
+cat > "$PLYM/brionai26.plymouth" <<'EOF'
 [Plymouth Theme]
 Name=BrionAI26
 Description=BrionAI26 Mission Control boot splash
@@ -80,66 +83,28 @@ ModuleName=script
 ImageDir=/usr/share/plymouth/themes/brionai26
 ScriptFile=/usr/share/plymouth/themes/brionai26/brionai26.script
 EOF
-cat > "$CFG/config/includes.chroot/usr/share/plymouth/themes/brionai26/brionai26.script" <<'EOF'
-# BrionAI26 Plymouth script theme
-# Donkere achtergrond met gouden merknaam en subtiele laad-indicator
+cat > "$PLYM/brionai26.script" <<'EOF'
+# BrionAI26 boot splash: donker paneel met gouden laadbalk onder het logo.
 screen_width = Window.GetWidth();
 screen_height = Window.GetHeight();
-theme_image = Image("logo.png");
-splash_bounds = Image("logo.png").GetDimensions();
 
-fun progress_callback(duration, progress) {
-    progress_percent = progress * 100;
-}
-Plymouth.SetBootProgressFunction(progress_callback);
-
-background = Image.New(screen_width, screen_height);
-background.SetColor(0.04, 0.055, 0.07);
-background = background.ConvertToBufferImage();
-background_area = background.AreaFromBackground(0, 0, 0, 0);
-
-logo_sprite = Sprite.New();
-logo_sprite.SetImage(theme_image);
-logo_sprite.SetPosition(screen_width / 2 - splash_bounds[0] / 2, screen_height / 2 - splash_bounds[1] / 2);
-
-progress_bar = Sprite.New();
-progress_bar_image = Image.New(screen_width * 0.2, 2);
-progress_bar_image.SetColor(0.85, 0.66, 0.47);
-progress_bar_image = progress_bar_image.ConvertToBufferImage();
-progress_bar.SetImage(progress_bar_image);
-progress_bar.SetPosition(screen_width / 2 - (screen_width * 0.2) / 2, screen_height / 2 + splash_bounds[1] / 2 + 40);
-
-fun refresh_callback(time) {
-    current = Plymouth.GetBootProgress();
-    progress_bar.SetImage(progress_bar_image.Scale(screen_width * 0.2 * current, 2));
-}
-Plymouth.SetRefreshFunction(refresh_callback);
+background = Image.New(screen_width, screen);
 EOF
 
-# 1e) Logo: kopieer het geüploade logo uit brand/ naar de plymouth-themamap.
-if [ -f "$HERE/../brand/file_00000000ace471f4822c47ae84fef756.png" ]; then
-    cp "$HERE/../brand/file_00000000ace471f4822c47ae84fef756.png" \
-       "$CFG/config/includes.chroot/usr/share/plymouth/themes/brionai26/logo.png"
-else
-    echo "WAARSCHUWING: brand-logo niet gevonden — splash zonder logo" >&2
-fi
-
-# 1f) Plymouth als boot-splash activeren via GRUB-defaults.
-mkdir -p "$CFG/config/includes.chroot/etc"
-cat > "$CFG/config/includes.chroot/etc/brionai26-plymouth-setup.sh" <<'EOF'
+# 1e) Plymouth-thema activeren via live-hook (thema is dan geïnstalleerd).
+mkdir -p "$CFG/config/hooks/live"
+cat > "$CFG/config/hooks/live/2100-set-plymouth-theme.chroot" <<'EOF'
 #!/bin/sh
-# Eerste keer draaien: maak de plymouth-config op het geïnstalleerde systeem.
 set -eu
-plymouth-set-default-theme -R brionai26
-dd if=/dev/zero of=/boot/initrd.img bs=1M count=0 2>/dev/null || true
-exit 0
+plymouth-set-default-theme brionai26
 EOF
-chmod 0755 "$CFG/config/includes.chroot/etc/brionai26-plymouth-setup.sh"
+chmod 0755 "$CFG/config/hooks/live/2100-set-plymouth-theme.chroot"
+
+# 1f) GRUB: quiet splash zodat Plymouth de boot toont.
+mkdir -p "$CFG/config/includes.chroot/etc/default/grub.d"
 cat > "$CFG/config/includes.chroot/etc/default/grub.d/brionai26.cfg" <<'EOF'
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
-GRUB_BACKGROUND=/usr/share/plymouth/themes/brionai26/logo.png
 EOF
-mkdir -p "$CFG/config/includes.chroot/etc/default/grub.d"
 
 # 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO, zodat
 #    elke nieuwe gebruiker de mission-control-opzet krijgt.
@@ -148,20 +113,17 @@ if [ -d "$HERE/../desktop/skel" ]; then
     cp -r "$HERE/../desktop/skel" "$CFG/config/includes.chroot/etc/skel"
     echo "== skel geplaatst: $(find "$CFG/config/includes.chroot/etc/skel" -type f | wc -l) bestanden =="
 else
-    
     echo "WAARSCHUWING: desktop/skel niet gevonden — desktop wordt NIET meegebouwd" >&2
     exit 3
 fi
 
-# 2b) Branding in skel: wallpaper en GTK-donkere look.
+# 2b) Wallpaper: het logo als achtergrond op alle 3 werkbladen.
 SKEL="$CFG/config/includes.chroot/etc/skel"
-mkdir -p "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml"
-if [ -f "$HERE/../brand/file_00000000ace471f4822c47ae84fef756.png" ]; then
+if [ -f "$LOGO" ]; then
     mkdir -p "$CFG/config/includes.chroot/usr/share/backgrounds/brionai26"
-    cp "$HERE/../brand/file_00000065px.png" \
-       "$CFG/config/includes.chroot/usr/share/backgrounds/brionai26/wallpaper.png" 2>/dev/null || cp "$HERE/../brand/file_00000000ace471f4822c47ae84fef756.png" \
-       "$CFG/config/includes.chroot/usr/share/backgrounds/brionai26/wallpaper.png"
+    cp "$LOGO" "$CFG/config/includes.chroot/usr/share/backgrounds/brionai26/wallpaper.png"
 fi
+mkdir -p "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml"
 cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" <<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xfce4-desktop" version="1.0">
@@ -169,24 +131,52 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" <<'EOF'
     <property name="screen0" type="empty">
       <property name="monitor0" type="empty">
         <property name="workspace0" type="empty">
-         <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/wallpaper.png"/>
-         <property name="image-style" type="int" value="4"/>
+          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/wallpaper.png"/>
+          <property name="image-style" type="int" value="4"/>
         </property>
-      </dir>
+        <property name="workspace1" type="empty">
+          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/wallpaper.png"/>
+          <property name="image-style" type="int" value="4"/>
+        </property>
+        <property name="workspace2" type="empty">
+          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/wallpaper.png"/>
+          <property name="image-style" type="int" value="4"/>
+        </property>
+      </property>
     </property>
   </property>
 </channel>
 EOF
 
-# 3) Autostart: picom + conky + de devilspie2-tegelwand bij login
+# 2c) Donkere XFCE-look: Adwaita-dark GTK-thema + LightDM-greeter met wallpaper.
+cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xsettings" version="1.0">
+  <property name="Net" type="empty">
+    <property name="ThemeName" type="string" value="Adwaita-dark"/>
+    <property name="IconThemeName" type="string" value="Adwaita"/>
+  </property>
+  <property name="Gtk" type="empty">
+    <property name="FontName" type="string" value="Sans 10"/>
+  </property>
+</channel>
+EOF
+mkdir -p "$CFG/config/includes.chroot/etc/lightdm"
+cat > "$CFG/config/includes.chroot/etc/lightdm/lightdm-gtk-greeter.conf" <<'EOF'
+[greeter]
+background=/usr/share/backgrounds/brionai26/wallpaper.png
+theme-name=Adwaita-dark
+EOF
+
+# 3) Autostart: picom + conky + devilspie2 bij login
 AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-desktop.desktop"
 mkdir -p "$(dirname "$AUTO")"
 cat > "$AUTO" <<'EOF'
 [Desktop Entry]
-Type=Name
+Type=Application
 Name=BrionAI26 Mission Control
 Exec=sh -c 'picom --config $HOME/.config/picom/picom.conf & conky -c $HOME/.config/conky/conky.conf & devilspie2 -a &'
 OnlyShowIn=XFCE;
 EOF
 
-echo "== fase-2/3 bestanden geplaatst in $CFG =="
+echo "== fase-2/3 branding-bestanden geplaatst in $CFG =="
