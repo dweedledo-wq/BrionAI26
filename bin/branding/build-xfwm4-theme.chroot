@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+# BrionAI26 xfwm4-thema: kopieer het veranderbare Default-thema en kleur het
+# goud/donker via de themerc uit bin/branding/."/usr/share/themes/BrionAI26/xfwm4/themerc" via cp+vervang.
+THEME_DIR=/usr/share/themes/BrionAI26/xfwm4
+if [ -d /usr/share/themes/Default/xfwm4 ]; then
+    BASE=/usr/share/themes/Default/xfwm4
+elif [ -d /usr/share/themes/default/xfwm4 ]; then
+    BASE=/usr/share/themes/default/xfwm4
+else
+    echo "geen veranderbaar basis-thema gevonden; BrionAI26-thema overgeslagen" >&2
+    exit 0
+fi
+mkdir -p /usr/share/themes/BrionAI26
+cp -r "$BASE" "$THEME_DIR"
+cp /app/bin/branding/xfwm4-themerc "$THEME_DIR/themerc"
