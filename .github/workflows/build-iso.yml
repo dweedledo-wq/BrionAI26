@@ -2,10 +2,17 @@ name: Build ISO
 
 on:
   push:
+    paths:
+      - 'bin/**'
+      - '.github/workflows/build-iso.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: build-iso
+  cancel-in-progress: true
 
 jobs:
   build:
