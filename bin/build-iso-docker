@@ -1,0 +1,14 @@
+#!/bin/sh
+# Wrapper: bouwt de ISO in een privileged debian:stable container.
+# live-build heeft chroot/mount nodig; op GitHub Actions-runners (ubuntu-latest)
+# draait dit direct op de VM. De container benadert geen poorten en publiceert niets.
+set -e
+
+IMAGE=debian:stable
+
+docker run --privileged --rm \
+    --workdir /app \
+    --volume "${PWD}/bin:/app/bin" \
+    --volume "${PWD}/dist:/app/dist" \
+    "${IMAGE}" \
+    /bin/bash bin/build-iso /app/build
