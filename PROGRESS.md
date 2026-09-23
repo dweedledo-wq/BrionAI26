@@ -5,10 +5,12 @@
 
 ## Volgende stappen
 
-- Gebruiker: nieuwste ISO op USB live-booten; tegelwand + hover + splash testen.
-- Eerste echte Calamares-installatie op een testmachine → daarna v1.0-tag.
-- Eventueel: Calamares NL-teksten, paneel-styling, picom-blur versterken.
-- Oude testbranches op `dweedledo-wq/Vibe` opruimen (handmatig, gebruiker).
+1. GRUB-bootmenu met aparte opties "BrionAI26 live starten" en "BrionAI26
+   installeren".
+2. SysDash-PWA (sysdash-brionize, private repo) als Command Center-tegel
+   i.p.v. Conky-HUD.
+3. Live-test nieuwste ISO.
+4. Calamares-installatie → v1.0-tag.
 
 ## 2026-09-23 — FASE 5 BEWEZEN: first-boot wizard ✅
 
