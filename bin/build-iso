@@ -50,9 +50,13 @@ fi
 
 # lb build logt naar stdout; tee vangt alles op in live-build.log zodat de
 # workflow het log bij faal kan uitlezen (build/ is in de container gemount).
-lb build 2>&1 | tee live-build.log
-RC="${PIPESTATUS:-}"
-if [ -n "$RC" ] && [ "$RC" != "0" ]; then
+# POSIX-veilig: de subshell schrijft de echte exit-code naar een statusbestand,
+# want de pipeline-status zelf is die van tee (altijd 0).
+STATUS="$(mktemp)"
+(lb build 2>&1; echo $? > "$STATUS") | tee live-build.log
+RC="$(cat "$STATUS")"
+rm -f "$STATUS"
+if [ "$RC" -ne 0 ]; then
     echo "lb build faalde met exit $RC" >&2
     exit "$RC"
 fi
