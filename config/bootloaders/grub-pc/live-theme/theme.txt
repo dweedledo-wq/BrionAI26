@@ -3,7 +3,7 @@
 # wordt door live-build uit config/bootloaders/grub-pc/splash.svg
 # gegenereerd (800x600).
 
-desktop-image: "splash.png"
+desktop-image: "../splash.png"
 title-color: "#F0C090"
 title-font: "GNU Unifont Regular 16"
 title-text: "BrionAI26"
