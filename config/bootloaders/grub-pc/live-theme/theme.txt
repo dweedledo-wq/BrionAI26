@@ -5,10 +5,10 @@
 
 desktop-image: "splash.png"
 title-color: "#F0C090"
-title-font: "Unifont Regular 16"
+title-font: "GNU Unifont Regular 16"
 title-text: "BrionAI26"
-message-font: "Unifont Regular 16"
-terminal-font: "Unifont Regular 16"
+message-font: "GNU Unifont Regular 16"
+terminal-font: "GNU Unifont Regular 16"
 
 # statusregel onderaan
 + label {
@@ -19,7 +19,7 @@ terminal-font: "Unifont Regular 16"
     text = "BrionAI26 mission control -- l live * i installeren * u geavanceerd"
     align = "center"
     color = "#7A93B8"
-    font = "Unifont Regular 16"
+    font = "GNU Unifont Regular 16"
 }
 
 # bootmenu
@@ -29,9 +29,9 @@ terminal-font: "Unifont Regular 16"
     top = 52%
     height = 48%-80
     item_color = "#CDD8E1"
-    item_font = "Unifont Regular 16"
+    item_font = "GNU Unifont Regular 16"
     selected_item_color = "#2683C0"
-    selected_item_font = "Unifont Regular 16"
+    selected_item_font = "GNU Unifont Regular 16"
     item_height = 20
     item_padding = 0
     item_spacing = 6
@@ -47,7 +47,7 @@ terminal-font: "Unifont Regular 16"
     top = 100%-80
     height = 8
     width = 70%
-    font = "Unifont Regular 16"
+    font = "GNU Unifont Regular 16"
     text_color = "#060B16"
     fg_color = "#2683C0"
     bg_color = "#0A1424"
