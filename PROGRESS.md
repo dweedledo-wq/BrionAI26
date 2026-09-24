@@ -35,7 +35,7 @@
 - **Belangrijk voor de doel-pc:** start de installatie altijd via de
   GRUB-entry "BrionAI26 installeren" of het desktop-icoon
   "Installeer BrionAI26" (beide lopen via `calamares-install-debian`:
-  fstab-backup + pkexec). Rechtreeks `calamares` vanuit een terminal
+  fstab-backup + pkexec). Rechtstreeks `calamares` vanuit een terminal
   zonder pkexec faalt bewezen op rechten (geen admin → alle
   requirements rood).
 - `libxcb-cursor0` expliciet toegevoegd aan de installer-pakketlijst
@@ -130,7 +130,7 @@
 
 ## 2026-09-23 — FASE 4 BEWEZEN: Calamares installer ✅
 
-- **CI-run 35894259863 geslaagd**: Calamares 3.3.14 + settings-debijna,
+- **CI-run 35894259863 geslaagd**: Calamares 3.3.14 + settings-debian,
   "Installeer BrionAI26"-icoon op de live-desktop (pkexec calamares).
 
 ## 2026-09-23 — LOOK-POLISH 1: sci-fi HUD ✅
