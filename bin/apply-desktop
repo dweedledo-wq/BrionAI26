@@ -182,7 +182,7 @@ menuentry "BrionAI26 installeren" --hotkey=i {
 
 submenu 'Geavanceerde opties ...' --hotkey=u {
 	source /boot/grub/theme.cfg
-	menuentry "BrionAI26 live starten (fail-safe modis)" --hotkey=f {
+	menuentry "BrionAI26 live starten (fail-safe modus)" --hotkey=f {
 		linux	@KERNEL_LIVE@ @LB_BOOTAPPEND_LIVE_FAILSAFE@
 		initrd	@INITRD_LIVE@
 	}
