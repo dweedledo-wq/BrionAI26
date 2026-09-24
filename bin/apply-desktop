@@ -1,53 +1,53 @@
 #!/bin/sh
 
-# BrionAI26 — fase 2/3/4/5 inbouw in de live-build ISO.
-# Wordt door bin/build-iso aangeroepen ná lb config, vóór lb build.
-# Idempotent: veilig herhaald uit te voeren.
+# Draait binnen een privileged debian:stable container (zie bin/build-iso-docker).
+# Bouwt de BrionAI26 ISO: fase 1 (basis) + fase 2 (mission-control desktop).
 
 set -eu
 
-CFG="$1"   # live-build config-map (bv. build/)
-HERE="$(dirname "$0")"
-LOGO="$HERE/../brand/file_00000000ace471f4822c47ae84fef756.png"
-BRAND="$HERE/branding"
+export DEBIAN_FRONTEND=noninteractive
 
-# 1) Pakketlijst fase 2: XFCE + mission-control-onderdelen.
-mkdir -p "$CFG/config/package-lists"
+BASE="$PWD"
+CFG="$BASE/brionai26-config"
+
+mkdir -p "$CFG" "$BASE/dist"
+
+# 0) Overlay van onze eigen configuratie (in repo).
+cp -a config/. "$CFG/config/"
+
+# 1) live-build basisconfiguratie.
+lb config \
+  --distribution "trixie" \
+  --architecture "amd64" \
+  --archive-areas "main contrib non-free non-free-firmware" \
+  --bootappend-live "boot=live components quiet splash" \
+  --bootloaders "grub-pc,grub-efi" \
+  --debian-installer "none" \
+  --iso-application "BrionAI26" \
+  --iso-publisher "Brionize; https://brionize.nl" \
+  --iso-volume "BRIIONAI26" \
+  --memtest "true"
+
+# 1b) Pakketlijst fase 2: mission-control desktop.
 cat > "$CFG/config/package-lists/brionai26-desktop.list.chroot" <<'EOF'
-# BrionAI26 mission-control desktop (fase 2)
+# BrionAI26 mission control (fase 2)
 xfce4
 xfce4-terminal
-picom
-conky-all
-devilspie2
-wmctrl
-chromium
 lightdm
 lightdm-gtk-greeter
-plymouth
-plymouth-themes
-imagemagick
-gnome-themes-extra
-adwaita-icon-theme
+lightdm-gtk-greeter-settings
+network-manager
+network-manager-gnome
+xfce4-power-manager
+xfce4-screensaver
+conky-all
 fonts-jetbrains-mono
+firefox-esr
+thunderbird
+libreoffice-calc
+libreoffice-writer
+vlc
 sudo
-EOF
-
-# 1b) Pakketlijst fase 3: Dev Studio-devstack.
-cat > "$CFG/config/package-lists/brionai26-devstudio.list.chroot" <<'EOF'
-# BrionAI26 Dev Studio (fase 3)
-geany
-git
-gitg
-tmux
-build-essential
-python3
-python3-pip
-python3-venv
-nodejs
-npm
-curl
-wget
 openssh-client
 EOF
 
@@ -56,274 +56,5 @@ cat > "$CFG/config/package-lists/brionai26-installer.list.chroot" <<'EOF'
 # BrionAI26 installer (fase 4)
 calamares
 calamares-settings-debian
+libxcb-cursor0
 EOF
-
-# 1b3) Pakketlijst fase 5: first-boot wizard.
-cat > "$CFG/config/package-lists/brionai26-wizard.list.chroot" <<'EOF'
-# BrionAI26 first-boot wizard (fase 5)
-zenity
-EOF
-
-# 1c) VS Code via officiële Microsoft apt-repo (live-hook in chroot).
-HOOKS="$CFG/config/hooks/live"
-mkdir -p "$HOOKS"
-cat > "$HOOKS/2000-install-vscode.chroot" <<'EOF'
-#!/bin/sh
-set -eu
-curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
-    -o /etc/apt/trusted.gpg.d/microsoft.asc
-echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" \
-    > /etc/apt/sources.list.d/vscode.list
-apt-get update
-apt-get install --yes --no-install-recommends code
-EOF
-chmod 0755 "$HOOKS/2000-install-vscode.chroot"
-
-# 1d) BrionAI26 Plymouth-splash: thema uit bin/branding/ + logo uit brand/.
-PLYM="$CFG/config/includes.chroot/usr/share/plymouth/themes/brionai26"
-mkdir -p "$PLYM"
-cp "$BRAND/brionai26.plymouth" "$PLYM/brionai26.plymouth"
-cp "$BRAND/brionai26.script" "$PLYM/brionai26.script"
-if [ -f "$LOGO" ]; then
-    cp "$LOGO" "$PLYM/logo.png"
-else
-    echo "WAARSCHUWING: brand-logo niet gevonden — splash zonder logo" >&2
-fi
-
-# 1e) Plymouth-thema activeren via live-hook.
-cat > "$HOOKS/2100-set-plymouth-theme.chroot" <<'EOF'
-#!/bin/sh
-set -eu
-plymouth-set-default-theme brionai26
-EOF
-chmod 0755 "$HOOKS/2100-set-plymouth-theme.chroot"
-
-# 1e1b) Mission-control palet + artwork-generator (live-hook, chroot):
-# kleuren uit brand/theme/mission-control.conf zijn leidend; de hook
-# genereert splash-balken + staalblauwe wallpaper met ImageMagick.
-mkdir -p "$CFG/config/includes.chroot/usr/share/brionai26"
-cp "$HERE/../brand/theme/mission-control.conf" "$CFG/config/includes.chroot/usr/share/brionai26/mission-control.conf"
-cp "$BRAND/generate-artwork.chroot" "$HOOKS/2150-generate-artwork.chroot"
-chmod 0755 "$HOOKS/2150-generate-artwork.chroot"
-
-# 1e2) xfwm4-thema BrionAI26: themerc + hook uit bin/branding/.
-cp "$BRAND/xfwm4-themerc" "$CFG/config/includes.chroot/usr/share/brionai26/xfwm4-themerc"
-cp "$BRAND/build-xfwm4-theme.chroot" "$HOOKS/2200-build-xfwm4-theme.chroot"
-chmod 0755 "$HOOKS/2200-build-xfwm4-theme.chroot"
-
-# 1e3) First-boot wizard (fase 5): script + autostart-entry.
-mkdir -p "$CFG/config/includes.chroot/usr/bin"
-cp "$BRAND/firstboot-wizard.sh" "$CFG/config/includes.chroot/usr/bin/brionai26-firstboot"
-chmod 0755 "$CFG/config/includes.chroot/usr/bin/brionai26-firstboot"
-WIZARD_AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-firstboot.desktop"
-mkdir -p "$(dirname "$WIZARD_AUTO")"
-cat > "$WIZARD_AUTO" <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=BrionAI26 First-Boot Wizard
-Exec=/usr/bin/brionai26-firstboot
-OnlyShowIn=XFCE;
-EOF
-
-# 1f) GRUB: quiet splash + BrionAI26-menu-tekst.
-mkdir -p "$CFG/config/includes.chroot/etc/default/grub.d"
-cat > "$CFG/config/includes.chroot/etc/default/grub.d/brionai26.cfg" <<'EOF'
-GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
-GRUB_DISTRIBUTOR="BrionAI26"
-EOF
-
-# 1f2) GRUB-bootmenu (taak 1): aparte opties "live starten" en "installeren".
-# binary_grub_cfg kopieert eerst de live-build-templates en legt daarna de
-# eigen bestanden uit config/bootloaders/grub-pc/ eroverheen; de @PLACEHOLDERS@
-# worden daarna door live-build in alle .cfg's gesubstitueerd.
-GRUBMENU="$CFG/config/bootloaders/grub-pc"
-mkdir -p "$GRUBMENU"
-cat > "$GRUBMENU/config.cfg" <<'EOF'
-set default=0
-
-# Fix (VM-bewijs 2026-09-24): bij legacy/El Torito-boot laadt de GRUB-core
-# zijn standaardfont via $prefix/fonts/unicode.pf2 (feature_default_font_path),
-# maar live-build legt unicode.pf2 in $prefix/ zelf. Het live-build-template
-# "font=unicode" faalde daardoor met "file /boot/grub/fonts/unicode.pf2 not
-# found" en gfxterm viel terug naar de kale tekstmodus. Expliciet absoluut
-# pad = het bewezen bestaande pad in de ISO.
-loadfont /boot/grub/unicode.pf2
-
-set gfxmode=800x600
-set gfxpayload=keep
-insmod efi_gop
-insmod efi_uga
-insmod video_bochs
-insmod video_cirrus
-insmod gfxterm
-insmod png
-source /boot/grub/theme.cfg
-terminal_output gfxterm
-insmod play
-play 960 440 1 0 4 440 1
-EOF
-
-cat > "$GRUBMENU/grub.cfg" <<'EOF'
-source /boot/grub/config.cfg
-
-set default=0
-set timeout=10
-
-menuentry "BrionAI26 live starten" --hotkey=l {
-	linux	@KERNEL_LIVE@ @APPEND_LIVE@
-	initrd	@INITRD_LIVE@
-}
-
-menuentry "BrionAI26 installeren" --hotkey=i {
-	linux	@KERNEL_LIVE@ @APPEND_LIVE@ brionai26.install=1
-	initrd	@INITRD_LIVE@
-}
-
-submenu 'Geavanceerde opties ...' --hotkey=u {
-	source /boot/grub/theme.cfg
-	menuentry "BrionAI26 live starten (fail-safe modus)" --hotkey=f {
-		linux	@KERNEL_LIVE@ @LB_BOOTAPPEND_LIVE_FAILSAFE@
-		initrd	@INITRD_LIVE@
-	}
-	if @ENABLE_VERIFY_CHECKSUMS@; then
-		menuentry "Controleer integriteit van het boot-medium" --hotkey=v {
-			linux	@KERNEL_LIVE@ @APPEND_VERIFY_CHECKSUMS@
-			initrd	@INITRD_LIVE@
-		}
-	fi
-	if [ "${grub_platform}" = "efi" ]; then
-		menuentry "UEFI Firmware Settings" --hotkey=w {
-			fwsetup
-		}
-	fi
-}
-EOF
-
-# 1f2b) GRUB-theming: splash.svg (800x600, wordt door binary_bootloader_splash
-# naar splash.png geconverteerd met rsvg-convert) + live-theme/theme.txt.
-# theme.cfg uit het live-build-template activeert het thema als splash.png bestaat.
-# De merklogo-data-URI staat als @BRIONAI26_LOGO_B64@-placeholder in de svg;
-# hier wordt die bij build-tijd gevuld met het logo uit brand/ (96px base64),
-# zodat de repo geen 26KB base64-blob hoeft te bevatten.
-SRC_GRUB="$HERE/../config/bootloaders/grub-pc"
-if [ -f "$SRC_GRUB/splash.svg" ]; then
-    LOGO96="$CFG/brionai26-grub-logo96.png"
-    convert "$LOGO" -resize 96x96 "$LOGO96"
-    LOGO_B64="$(base64 -w0 "$LOGO96")"
-    sed "s|@BRIONAI26_LOGO_B64@|$LOGO_B64|" "$SRC_GRUB/splash.svg" > "$GRUBMENU/splash.svg"
-fi
-if [ -f "$SRC_GRUB/live-theme/theme.txt" ]; then
-    mkdir -p "$GRUBMENU/live-theme"
-    cp "$SRC_GRUB/live-theme/theme.txt" "$GRUBMENU/live-theme/theme.txt"
-fi
-
-# 1f3) Install-modus: autostart-wrapper die Calamares start als de GRUB-optie
-# "BrionAI26 installeren" gekozen was (brionai26.install=1 op de kernel-cmdline).
-# calamares-install-debian (Debian-wrapper) regelt fstab-backup + wachtwoordloze
-# pkexec (live-config geeft de live-gebruiker NOPASSWD-sudo + polkit-YES).
-mkdir -p "$CFG/config/includes.chroot/usr/bin"
-cat > "$CFG/config/includes.chroot/usr/bin/brionai26-install-mode" <<'EOF'
-#!/bin/sh
-# Start Calamares automatisch na de live-login als voor het booten voor
-# "BrionAI26 installeren" is gekozen; anders direct weer uit.
-if ! grep -qs 'brionai26.install=1' /proc/cmdline; then
-    exit 0
-fi
-# Kort laten settelen: paneel + achtergrond eerst, dan de installer.
-sleep 5
-exec calamares-install-debian
-EOF
-chmod 0755 "$CFG/config/includes.chroot/usr/bin/brionai26-install-mode"
-INSTALL_AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-install-mode.desktop"
-mkdir -p "$(dirname "$INSTALL_AUTO")"
-cat > "$INSTALL_AUTO" <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=BrionAI26 Installer Autostart
-Exec=/usr/bin/brionai26-install-mode
-OnlyShowIn=XFCE;
-EOF
-
-# 2) Skel-map: alles uit desktop/skel/ komt in /etc/skel van de ISO.
-if [ -d "$HERE/../desktop/skel" ]; then
-    mkdir -p "$CFG/config/includes.chroot/etc"
-    cp -r "$HERE/../desktop/skel" "$CFG/config/includes.chroot/etc/skel"
-    echo "== skel geplaatst: $(find "$CFG/config/includes.chroot/etc/skel" -type f | wc -l) bestanden =="
-else
-    echo "WAARSCHUWING: desktop/skel niet gevonden — desktop wordt NIET meegebouwd" >&2
-    exit 3
-fi
-
-# 2b) Wallpaper: staalblauwe mission-control-wand gegenereerd door de
-# 2150-artwork-hook (geen logo-muur); op alle 3 werkbladen gelijk.
-SKEL="$CFG/config/includes.chroot/etc/skel"
-mkdir -p "$CFG/config/includes.chroot/usr/share/backgrounds/brionai26"
-mkdir -p "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml"
-cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" <<'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<channel name="xfce4-desktop" version="1.0">
-  <property name="backdrop" type="empty">
-    <property name="screen0" type="empty">
-      <property name="monitor0" type="empty">
-        <property name="workspace0" type="empty">
-          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/wallpaper.png"/>
-          <property name="image-style" type="int" value="4"/>
-        </property>
-        <property name="workspace1" type="empty">
-          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/wallpaper.png"/>
-          <property name="image-style" type="int" value="4"/>
-        </property>
-        <property name="workspace2" type="empty">
-          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/wallpaper.png"/>
-          <property name="image-style" type="int" value="4"/>
-        </property>
-      </property>
-    </property>
-  </property>
-</channel>
-EOF
-
-# 2c) Donkere look: GTK-thema + LightDM-greeter met wallpaper。
-cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<channel name="xsettings" version="1.0">
-  <property name="Net" type="empty">
-    <property name="ThemeName" type="string" value="Adwaita-dark"/>
-    <property name="IconThemeName" type="string" value="Adwaita"/>
-  </property>
-  <property name="Gtk" type="empty">
-    <property name="FontName" type="string" value="JetBrains Mono 10"/>
-  </property>
-</channel>
-EOF
-mkdir -p "$CFG/config/includes.chroot/etc/lightdm"
-cat > "$CFG/config/includes.chroot/etc/lightdm/lightdm-gtk-greeter.conf" <<'EOF'
-[greeter]
-background=/usr/share/backgrounds/brionai26/wallpaper.png
-theme-name=Adwaita-dark
-EOF
-
-# 2d) Installer-startpictogram op de live-desktop (fase 4).
-mkdir -p "$SKEL/Desktop"
-cat > "$SKEL/Desktop/install-brionai26.desktop" <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=Installeer BrionAI26
-Comment=Installeer BrionAI26 permanent op deze computer
-Exec=pkexec calamares
-Icon=install
-Categories=System
-EOF
-
-# 3) Autostart: picom + conky + devilspie2 bij login
-AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-desktop.desktop"
-mkdir -p "$(dirname "$AUTO")"
-cat > "$AUTO" <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=BrionAI26 Mission Control
-Exec=sh -c 'picom --config $HOME/.config/picom/picom.conf & conky -c $HOME/.config/conky/conky.conf & devilspie2 -a &'
-OnlyShowIn=XFCE;
-EOF
-
-echo "== fase-2/3/4/5 bestanden geplaatst in $CFG =="
