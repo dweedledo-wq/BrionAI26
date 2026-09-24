@@ -12,7 +12,7 @@
 3. Na v1.0-bewijsvoering: repo privé zetten (besluit Brionize; let op:
    private repo's krijgen geen gratis Actions-minuten meer).
 
-## 2026-09-24 — SYSDASH-TEGEL (taak 2): hotkey klaar, CI-bewijs geleverd
+## 2026-09-24 — SYSDASH-TEGEL (taak 2) BEWEZEN ✅
 
 - Sjabloon-repo: `brionize-nl/sysdash` (publiek); de draaiende hub staat
   op de Asus-desktop (private repo `sysdash-brionize` volgens Brionize —
@@ -23,9 +23,11 @@
   `sysdash-web.service`). Tailscale gekozen omdat het IP stabiel is;
   Cloudflare Quick Tunnel is afgewezen (roterende URL's, onbruikbaar
   voor een vaste hotkey). sysdash draait dus niet mee op de ISO.
-- **CI-run 35981095804 geslaagd** op branch `vibe/sysdash-voorbereiding-8404e4`
-  (commit `4818014d`, Tailscale-versie; eerdere bewijs-runs 35973564731
-  voor de localhost-versie en 35928301094 voor de placeholder-versie):
+- **CI-run 35984530846 geslaagd op main** (merge PR #4) — Release
+  `iso-20260924-100944` met de definitieve Tailscale-hotkey. Eerdere
+  bewijs-runs: 35981095804 op de branch (Tailscale-versie, commit
+  `4818014d`), 35973564731 (localhost-versie) en 35928301094
+  (placeholder-versie):
   hotkey **Super+S** opent het sysdash-dashboard als PWA-tegel op het
   Command Center (werkblad 1). Na een kopieerfout in de Super+G-regel
   (commit `fd754540`) is die hersteld en blob-exact geverifieerd.
