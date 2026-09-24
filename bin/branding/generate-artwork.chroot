@@ -18,28 +18,29 @@ convert -size 300x1 "xc:${ACCENT_STEEL}" "$PLYM/bar_fill.png"
 
 # --- Mission-control wallpaper (1920x1080, FUI-basis) ---
 # Donkere staalblauwe basis met subtil raster: het "lege scherm" waarop de
-# live tegels de sterren zijn. Geen logo-muur.
-GRID=/tmp/brionai26-grid.mvg
-{
-    echo "viewbox 0 0 1919 1079"
-    i=60
-    while [ "$i" -lt 1920 ]; do
-        echo "line $i,0 $i,1079"
-        i=$((i+60))
-    done
-    i=60
-    while [ "$i" -lt 1080 ]; do
-        echo "line 0,$i 1919,$i"
-        i=$((i+60))
-    done
-} > "$GRID"
+# live tegels de sterren zijn. Geen logo-muur. De raster-primitieven gaan
+# inline als -draw-string (de @file-notatie staat op de ImageMagick-blacklist
+# en brak de CI-build).
+GRID="viewbox 0 0 1919 1079
+"
+i=60
+while [ "$i" -lt 1920 ]; do
+    GRID="${GRID}line $i,0 $i,1079
+"
+    i=$((i+60))
+done
+i=60
+while [ "$i" -lt 1080 ]; do
+    GRID="${GRID}line 0,$i 1919,$i
+"
+    i=$((i+60))
+done
 convert -size 1920x1080 "xc:${BG_DEEP}" \
     -stroke "${BG_PANEL}" -strokewidth 1 \
-    -draw "@$GRID" \
+    -draw "$GRID" \
     -stroke "${ACCENT_STEEL}" -strokewidth 2 -draw "line 24,540 96,540" \
     -stroke "${ACCENT_STEEL_BRIGHT}" -strokewidth 2 -draw "line 1824,540 1896,540" \
     -stroke "${ACCENT_GOLD}" -strokewidth 1 -draw "line 0,1079 1919,1079" \
     -fill "${BG_DEEP}" -colorize 0 \
     "$WALL"
-rm -f "$GRID"
 chmod 0644 "$PLYM/bar_track.png" "$PLYM/bar_fill.png" "$WALL"
