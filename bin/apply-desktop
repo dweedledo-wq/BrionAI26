@@ -138,6 +138,31 @@ EOF
 # worden daarna door live-build in alle .cfg's gesubstitueerd.
 GRUBMENU="$CFG/config/bootloaders/grub-pc"
 mkdir -p "$GRUBMENU"
+cat > "$GRUBMENU/config.cfg" <<'EOF'
+set default=0
+
+# Fix (VM-bewijs 2026-09-24): bij legacy/El Torito-boot laadt de GRUB-core
+# zijn standaardfont via $prefix/fonts/unicode.pf2 (feature_default_font_path),
+# maar live-build legt unicode.pf2 in $prefix/ zelf. Het live-build-template
+# "font=unicode" faalde daardoor met "file /boot/grub/fonts/unicode.pf2 not
+# found" en gfxterm viel terug naar de kale tekstmodus. Expliciet absoluut
+# pad = het bewezen bestaande pad in de ISO.
+loadfont /boot/grub/unicode.pf2
+
+set gfxmode=800x600
+set gfxpayload=keep
+insmod efi_gop
+insmod efi_uga
+insmod video_bochs
+insmod video_cirrus
+insmod gfxterm
+insmod png
+source /boot/grub/theme.cfg
+terminal_output gfxterm
+insmod play
+play 960 440 1 0 4 440 1
+EOF
+
 cat > "$GRUBMENU/grub.cfg" <<'EOF'
 source /boot/grub/config.cfg
 
@@ -176,10 +201,16 @@ EOF
 
 # 1f2b) GRUB-theming: splash.svg (800x600, wordt door binary_bootloader_splash
 # naar splash.png geconverteerd met rsvg-convert) + live-theme/theme.txt.
-# theme.cfg uit de live-build-template activeert het thema als splash.png bestaat.
+# theme.cfg uit het live-build-template activeert het thema als splash.png bestaat.
+# De merklogo-data-URI staat als @BRIONAI26_LOGO_B64@-placeholder in de svg;
+# hier wordt die bij build-tijd gevuld met het logo uit brand/ (96px base64),
+# zodat de repo geen 26KB base64-blob hoeft te bevatten.
 SRC_GRUB="$HERE/../config/bootloaders/grub-pc"
 if [ -f "$SRC_GRUB/splash.svg" ]; then
-    cp "$SRC_GRUB/splash.svg" "$GRUBMENU/splash.svg"
+    LOGO96="$CFG/brionai26-grub-logo96.png"
+    convert "$LOGO" -resize 96x96 "$LOGO96"
+    LOGO_B64="$(base64 -w0 "$LOGO96")"
+    sed "s|@BRIONAI26_LOGO_B64@|$LOGO_B64|" "$SRC_GRUB/splash.svg" > "$GRUBMENU/splash.svg"
 fi
 if [ -f "$SRC_GRUB/live-theme/theme.txt" ]; then
     mkdir -p "$GRUBMENU/live-theme"
@@ -252,7 +283,7 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" <<'EOF'
 </channel>
 EOF
 
-# 2c) Donkere look: GTK-thema + LightDM-greeter met wallpaper.
+# 2c) Donkere look: GTK-thema + LightDM-greeter met wallpaper。
 cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xsettings" version="1.0">
