@@ -1,53 +1,53 @@
 #!/bin/sh
 
-# Draait binnen een privileged debian:stable container (zie bin/build-iso-docker).
-# Bouwt de BrionAI26 ISO: fase 1 (basis) + fase 2 (mission-control desktop).
+# BrionAI26 — fase 2/3/4/5 inbouw in de live-build ISO.
+# Wordt door bin/build-iso aangeroepen ná lb config, vóór lb build.
+# Idempotent: veilig herhaald uit te voeren.
 
 set -eu
 
-export DEBIAN_FRONTEND=noninteractive
+CFG="$1"   # live-build config-map (bv. build/)
+HERE="$(dirname "$0")"
+LOGO="$HERE/../brand/file_00000000ace471f4822c47ae84fef756.png"
+BRAND="$HERE/branding"
 
-BASE="$PWD"
-CFG="$BASE/brionai26-config"
-
-mkdir -p "$CFG" "$BASE/dist"
-
-# 0) Overlay van onze eigen configuratie (in repo).
-cp -a config/. "$CFG/config/"
-
-# 1) live-build basisconfiguratie.
-lb config \
-  --distribution "trixie" \
-  --architecture "amd64" \
-  --archive-areas "main contrib non-free non-free-firmware" \
-  --bootappend-live "boot=live components quiet splash" \
-  --bootloaders "grub-pc,grub-efi" \
-  --debian-installer "none" \
-  --iso-application "BrionAI26" \
-  --iso-publisher "Brionize; https://brionize.nl" \
-  --iso-volume "BRIIONAI26" \
-  --memtest "true"
-
-# 1b) Pakketlijst fase 2: mission-control desktop.
+# 1) Pakketlijst fase 2: XFCE + mission-control-onderdelen.
+mkdir -p "$CFG/config/package-lists"
 cat > "$CFG/config/package-lists/brionai26-desktop.list.chroot" <<'EOF'
-# BrionAI26 mission control (fase 2)
+# BrionAI26 mission-control desktop (fase 2)
 xfce4
 xfce4-terminal
+picom
+conky-all
+devilspie2
+wmctrl
+chromium
 lightdm
 lightdm-gtk-greeter
-lightdm-gtk-greeter-settings
-network-manager
-network-manager-gnome
-xfce4-power-manager
-xfce4-screensaver
-conky-all
+plymouth
+plymouth-themes
+imagemagick
+gnome-themes-extra
+adwaita-icon-theme
 fonts-jetbrains-mono
-firefox-esr
-thunderbird
-libreoffice-calc
-libreoffice-writer
-vlc
 sudo
+EOF
+
+# 1b) Pakketlijst fase 3: Dev Studio-devstack.
+cat > "$CFG/config/package-lists/brionai26-devstudio.list.chroot" <<'EOF'
+# BrionAI26 Dev Studio (fase 3)
+geany
+git
+gitg
+tmux
+build-essential
+python3
+python3-pip
+python3-venv
+nodejs
+npm
+curl
+wget
 openssh-client
 EOF
 
@@ -57,4 +57,10 @@ cat > "$CFG/config/package-lists/brionai26-installer.list.chroot" <<'EOF'
 calamares
 calamares-settings-debian
 libxcb-cursor0
+EOF
+
+# 1b3) Pakketlijst fase 5: first-boot wizard.
+cat > "$CFG/config/package-lists/brionai26-wizard.list.chroot" <<'EOF'
+# BrionAI26 first-boot wizard (fase 5)
+zenity
 EOF
