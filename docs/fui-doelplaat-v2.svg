@@ -1,0 +1,271 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" font-family="DejaVu Sans Mono, monospace">
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#12233F" stop-opacity="0.88"/>
+      <stop offset="1" stop-color="#081120" stop-opacity="0.88"/>
+    </linearGradient>
+    <linearGradient id="glassDeep" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0C1A30" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#060D1A" stop-opacity="0.92"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="#060B16"/>
+  <g stroke="#0E1B30" stroke-width="1">
+    <path d="M96 0V1080M192 0V1080M288 0V1080M384 0V1080M480 0V1080M576 0V1080M672 0V1080M768 0V1080M864 0V1080M960 0V1080M1056 0V1080M1152 0V1080M1248 0V1080M1344 0V1080M1440 0V1080M1536 0V1080M1632 0V1080M1728 0V1080M1824 0V1080"/>
+    <path d="M0 96H1920M0 192H1920M0 288H1920M0 384H1920M0 480H1920M0 576H1920M0 672H1920M0 768H1920M0 864H1920M0 960H1920"/>
+  </g>
+  <line x1="20" y1="540" x2="80" y2="540" stroke="#2683C0" stroke-width="2"/>
+  <line x1="1840" y1="540" x2="1900" y2="540" stroke="#3270C5" stroke-width="2"/>
+
+  <rect x="0" y="0" width="1920" height="38" fill="#0A1626"/>
+  <g font-size="15">
+    <rect x="12" y="9" width="22" height="20" fill="none" stroke="#2683C0" stroke-width="2" filter="url(#glow)"/>
+    <text x="18" y="24" fill="#2683C0" font-weight="bold">1</text>
+    <rect x="42" y="9" width="22" height="20" fill="none" stroke="#3E5A7E" stroke-width="1"/>
+    <text x="48" y="24" fill="#3E5A7E">2</text>
+    <rect x="72" y="9" width="22" height="20" fill="none" stroke="#3E5A7E" stroke-width="1"/>
+    <text x="78" y="24" fill="#3E5A7E">3</text>
+    <text x="130" y="24" fill="#F0C090" font-weight="bold">BRIONAI26</text>
+    <text x="250" y="24" fill="#3E5A7E">mission control</text>
+    <text x="1700" y="24" fill="#7A93B8">BLAD 1 -- WAND-MODUS</text>
+    <text x="1848" y="25" fill="#CDD8E1" font-size="17" font-weight="bold">21:47</text>
+  </g>
+
+  <g filter="url(#glow)">
+    <rect x="40" y="60" width="1060" height="470" rx="6" fill="url(#glass)" stroke="#2683C0" stroke-width="1.5"/>
+  </g>
+  <text x="60" y="90" fill="#CDD8E1" font-size="18" font-weight="bold">BROWSER</text>
+  <text x="180" y="90" fill="#3E5A7E" font-size="13">live -- pagina zichtbaar in miniatuur</text>
+  <g stroke="#2683C0" stroke-width="1.5" fill="none">
+    <path d="M52 66 l14 0 l-4 -8 l-10 0 z"/>
+    <path d="M52 66 l0 14 l14 0 l0 -14 z"/>
+  </g>
+  <rect x="60" y="105" width="1020" height="400" fill="#0A1424" stroke="#12294A"/>
+  <rect x="60" y="105" width="1020" height="30" fill="#0C1A33"/>
+  <circle cx="78" cy="120" r="4" fill="#2683C0"/><circle cx="94" cy="120" r="4" fill="#3E5A7E"/><circle cx="110" cy="120" r="4" fill="#3E5A7E"/>
+  <rect x="130" y="112" width="600" height="16" rx="8" fill="#081120" stroke="#12294A"/>
+  <text x="142" y="124" fill="#7A93B8" font-size="12">brionize.nl/dashboard</text>
+  <g fill="#7A93B8" font-size="11">
+    <rect x="80" y="160" width="240" height="14" fill="#0E2542"/>
+    <rect x="80" y="182" width="180" height="8" fill="#0E2542"/>
+    <rect x="80" y="196" width="210" height="8" fill="#0E2542"/>
+    <rect x="340" y="160" width="300" height="160" fill="#0E2542" opacity="0.6"/>
+    <rect x="660" y="160" width="380" height="160" fill="#0E2542" opacity="0.4"/>
+    <rect x="80" y="340" width="960" height="10" fill="#0E2542"/>
+    <rect x="80" y="360" width="900" height="10" fill="#0E2542"/>
+    <rect x="80" y="380" width="930" height="10" fill="#0E2542"/>
+    <rect x="80" y="400" width="860" height="10" fill="#0E2542"/>
+    <rect x="80" y="420" width="920" height="10" fill="#0E2542"/>
+  </g>
+  <text x="1040" y="500" fill="#3E5A7E" font-size="12" text-anchor="end">hover = groot  |  klik = vastprikken</text>
+
+  <g filter="url(#glow)">
+    <rect x="1120" y="60" width="760" height="470" rx="6" fill="url(#glass)" stroke="#2683C0" stroke-width="1.5"/>
+  </g>
+  <text x="1140" y="90" fill="#CDD8E1" font-size="18" font-weight="bold">STATUSWAND</text>
+  <text x="1290" y="90" fill="#3E5A7E" font-size="13">sysdash hub -- asus 100.96.40.22:9000</text>
+  <text x="1840" y="90" fill="#2683C0" font-size="13" text-anchor="end">SUPER+S</text>
+
+  <g font-size="14">
+    <rect x="1140" y="108" width="230" height="150" fill="#0A1424" stroke="#12294A"/>
+    <text x="1155" y="134" fill="#CDD8E1" font-weight="bold">ASUS-DESKTOP</text>
+    <text x="1155" y="154" fill="#7A93B8" font-size="12">CPU 24%</text>
+    <rect x="1155" y="160" width="200" height="8" fill="#081120"/><rect x="1155" y="160" width="48" height="8" fill="#2683C0"/>
+    <text x="1155" y="188" fill="#7A93B8" font-size="12">MEM 41%</text>
+    <rect x="1155" y="194" width="200" height="8" fill="#081120"/><rect x="1155" y="194" width="82" height="8" fill="#3270C5"/>
+    <text x="1155" y="240" fill="#2683C0" font-size="12">ONLINE -- hub</text>
+
+    <rect x="1390" y="108" width="230" height="150" fill="#0A1424" stroke="#12294A"/>
+    <text x="1405" y="134" fill="#CDD8E1" font-weight="bold">BRIONAI26-PC</text>
+    <text x="1405" y="154" fill="#7A93B8" font-size="12">CPU 42%</text>
+    <rect x="1405" y="160" width="200" height="8" fill="#081120"/><rect x="1405" y="160" width="84" height="8" fill="#2683C0"/>
+    <text x="1405" y="188" fill="#7A93B8" font-size="12">MEM 61%</text>
+    <rect x="1405" y="194" width="200" height="8" fill="#081120"/><rect x="1405" y="194" width="122" height="8" fill="#3270C5"/>
+    <text x="1405" y="240" fill="#2683C0" font-size="12">ONLINE -- agent</text>
+
+    <rect x="1640" y="108" width="230" height="150" fill="#0A1424" stroke="#12294A"/>
+    <text x="1655" y="134" fill="#CDD8E1" font-weight="bold">LAPTOP</text>
+    <text x="1655" y="154" fill="#7A93B8" font-size="12">CPU 11%</text>
+    <rect x="1655" y="160" width="200" height="8" fill="#081120"/><rect x="1655" y="160" width="22" height="8" fill="#2683C0"/>
+    <text x="1655" y="188" fill="#7A93B8" font-size="12">MEM 33%</text>
+    <rect x="1655" y="194" width="200" height="8" fill="#081120"/><rect x="1655" y="194" width="66" height="8" fill="#3270C5"/>
+    <text x="1655" y="240" fill="#2683C0" font-size="12">ONLINE -- agent</text>
+
+    <rect x="1140" y="278" width="730" height="230" fill="#0A1424" stroke="#12294A"/>
+    <text x="1155" y="302" fill="#7A93B8" font-size="12">asus-desktop -- laatste 24u</text>
+    <polyline points="1155,470 1205,450 1255,462 1305,420 1355,436 1405,395 1455,410 1505,372 1555,388 1605,350 1655,368 1705,330 1755,344 1805,308 1855,322" fill="none" stroke="#2683C0" stroke-width="2"/>
+    <polyline points="1155,492 1205,484 1255,488 1305,470 1355,476 1405,458 1455,466 1505,448 1555,454 1605,438 1655,446 1705,430 1755,436 1805,420 1855,428" fill="none" stroke="#3270C5" stroke-width="1.5"/>
+  </g>
+
+  <g filter="url(#glow)">
+    <rect x="40" y="550" width="880" height="440" rx="6" fill="url(#glass)" stroke="#3270C5" stroke-width="1.5"/>
+  </g>
+  <text x="60" y="580" fill="#CDD8E1" font-size="18" font-weight="bold">AI-MATRIX</text>
+  <text x="200" y="580" fill="#3E5A7E" font-size="13">vier assistenten tegelijk live</text>
+  <text x="880" y="580" fill="#3E5A7E" font-size="12" text-anchor="end">SUPER+C/G/M/A  |  hover = naar voren</text>
+
+  <rect x="60" y="595" width="410" height="180" fill="#0A1424" stroke="#12294A" stroke-dasharray="5,3"/>
+  <text x="75" y="620" fill="#7A93B8" font-size="13">CLAUDE -- originele rasterplek</text>
+  <rect x="75" y="632" width="300" height="8" fill="#0E2542"/>
+  <rect x="75" y="650" width="340" height="8" fill="#0E2542"/>
+  <rect x="75" y="668" width="260" height="8" fill="#0E2542"/>
+  <rect x="75" y="700" width="180" height="26" rx="4" fill="#12294A" stroke="#2683C0"/>
+  <text x="120" y="718" fill="#CDD8E1" font-size="12"> Verstuur ></text>
+
+  <rect x="490" y="595" width="410" height="180" fill="#0A1424" stroke="#12294A"/>
+  <text x="505" y="620" fill="#CDD8E1" font-size="13" font-weight="bold">CHATGPT</text>
+  <rect x="505" y="632" width="320" height="8" fill="#0E2542"/>
+  <rect x="505" y="650" width="280" height="8" fill="#0E2542"/>
+  <rect x="505" y="700" width="180" height="26" rx="4" fill="#12294A"/>
+  <text x="550" y="718" fill="#7A93B8" font-size="12"> Verstuur ></text>
+
+  <rect x="60" y="790" width="410" height="180" fill="#0A1424" stroke="#12294A"/>
+  <text x="75" y="815" fill="#CDD8E1" font-size="13" font-weight="bold">MISTRAL</text>
+  <rect x="75" y="827" width="340" height="8" fill="#0E2542"/>
+  <rect x="75" y="845" width="300" height="8" fill="#0E2542"/>
+  <rect x="75" y="895" width="180" height="26" rx="4" fill="#12294A"/>
+  <text x="120" y="913" fill="#7A93B8" font-size="12"> Verstuur ></text>
+
+  <rect x="490" y="790" width="410" height="180" fill="#0A1424" stroke="#12294A"/>
+  <text x="505" y="815" fill="#CDD8E1" font-size="13" font-weight="bold">GEMINI</text>
+  <rect x="505" y="827" width="290" height="8" fill="#0E2542"/>
+  <rect x="505" y="845" width="330" height="8" fill="#0E2542"/>
+  <rect x="505" y="895" width="180" height="26" rx="4" fill="#12294A"/>
+  <text x="550" y="913" fill="#7A93B8" font-size="12"> Verstuur ></text>
+
+  <g filter="url(#glow)">
+    <rect x="620" y="560" width="620" height="420" rx="6" fill="url(#glassDeep)" stroke="#2683C0" stroke-width="2.5"/>
+  </g>
+  <text x="645" y="595" fill="#CDD8E1" font-size="15" font-weight="bold">CLAUDE -- naar voren gekomen (hover)</text>
+  <text x="1210" y="595" fill="#2683C0" font-size="12" text-anchor="end">focus: meteen typen</text>
+  <rect x="645" y="610" width="570" height="1" fill="#12294A"/>
+  <g font-size="13">
+    <rect x="645" y="625" width="420" height="10" fill="#0E2542"/>
+    <text x="645" y="660" fill="#2683C0">> we bouwen de FUI-wand -- tegels live, klik = vastprikken</text>
+    <rect x="645" y="675" width="500" height="10" fill="#0E2542"/>
+    <rect x="645" y="695" width="460" height="10" fill="#0E2542"/>
+    <rect x="645" y="715" width="520" height="10" fill="#0E2542"/>
+    <rect x="645" y="740" width="560" height="34" rx="4" fill="#081120" stroke="#12294A"/>
+    <text x="658" y="762" fill="#3E5A7E">type hier...</text>
+    <rect x="645" y="786" width="130" height="30" rx="4" fill="#12294A" stroke="#2683C0"/>
+    <text x="672" y="806" fill="#CDD8E1" font-size="12">Zend ></text>
+  </g>
+  <path d="M475 685 q70 -20 140 10" fill="none" stroke="#2683C0" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <path d="M615 695 l-18 -8 l6 20 z" fill="#2683C0"/>
+
+  <g filter="url(#glow)">
+    <rect x="950" y="550" width="440" height="440" rx="6" fill="url(#glass)" stroke="#3270C5" stroke-width="1.5"/>
+  </g>
+  <text x="970" y="580" fill="#CDD8E1" font-size="18" font-weight="bold">EIGEN PWA'S</text>
+  <text x="1120" y="580" fill="#3E5A7E" font-size="13">launcher -- draaiend zichtbaar</text>
+  <g font-size="12">
+    <rect x="970" y="600" width="120" height="90" rx="4" fill="#0A1424" stroke="#12294A"/>
+    <rect x="1005" y="615" width="50" height="34" rx="4" fill="#12294A" stroke="#3270C5"/>
+    <text x="1022" y="638" fill="#3270C5" font-size="14" font-weight="bold">Sy</text>
+    <text x="978" y="678" fill="#7A93B8">sysdash</text>
+
+    <rect x="1105" y="600" width="120" height="90" rx="4" fill="#0A1424" stroke="#12294A"/>
+    <rect x="1140" y="615" width="50" height="34" rx="4" fill="#12294A" stroke="#2683C0"/>
+    <text x="1152" y="638" fill="#2683C0" font-size="14" font-weight="bold">n8</text>
+    <text x="1113" y="678" fill="#7A93B8">n8n-flows</text>
+
+    <rect x="1240" y="600" width="120" height="90" rx="4" fill="#0A1424" stroke="#12294A"/>
+    <rect x="1275" y="615" width="50" height="34" rx="4" fill="#12294A" stroke="#7A93B8"/>
+    <text x="1287" y="638" fill="#7A93B8" font-size="14" font-weight="bold">Ts</text>
+    <text x="1248" y="678" fill="#7A93B8">tailscale</text>
+
+    <rect x="970" y="705" width="120" height="90" rx="4" fill="#0A1424" stroke="#12294A"/>
+    <rect x="1005" y="720" width="50" height="34" rx="4" fill="#12294A" stroke="#7A93B8"/>
+    <text x="1017" y="743" fill="#7A93B8" font-size="14" font-weight="bold">Pm</text>
+    <text x="978" y="783" fill="#7A93B8">pm2</text>
+
+    <rect x="1105" y="705" width="120" height="90" rx="4" fill="#0A1424" stroke="#12294A"/>
+    <rect x="1140" y="720" width="50" height="34" rx="4" fill="#12294A" stroke="#7A93B8"/>
+    <text x="1152" y="743" fill="#7A93B8" font-size="14" font-weight="bold">Db</text>
+    <text x="1113" y="783" fill="#7A93B8">data</text>
+
+    <rect x="1240" y="705" width="120" height="90" rx="4" fill="none" stroke="#3E5A7E" stroke-dasharray="5,3"/>
+    <rect x="1275" y="720" width="50" height="34" rx="4" fill="none" stroke="#3E5A7E"/>
+    <text x="1294" y="743" fill="#3E5A7E" font-size="16">+</text>
+    <text x="1248" y="783" fill="#3E5A7E">eigen app</text>
+
+    <rect x="970" y="815" width="390" height="160" rx="4" fill="#0A1424" stroke="#12294A"/>
+    <text x="985" y="840" fill="#CDD8E1" font-size="13" font-weight="bold">n8n-flows -- draait live</text>
+    <circle cx="990" cy="865" r="4" fill="#2683C0"/><text x="1002" y="870" fill="#7A93B8">backup-rotatie -- actief</text>
+    <circle cx="990" cy="890" r="4" fill="#2683C0"/><text x="1002" y="895" fill="#7A93B8">sync-sysdash -- actief</text>
+    <circle cx="990" cy="915" r="4" fill="#F0C090"/><text x="1002" y="920" fill="#7A93B8">rapport-gen -- wacht</text>
+    <text x="985" y="955" fill="#3E5A7E" font-size="11">hover/klik = zelfde gedrag als alle tegels</text>
+  </g>
+
+  <g filter="url(#glow)">
+    <rect x="1420" y="550" width="460" height="440" rx="6" fill="url(#glass)" stroke="#2683C0" stroke-width="1.5"/>
+  </g>
+  <text x="1440" y="580" fill="#CDD8E1" font-size="18" font-weight="bold">SYSTEEM-HUD</text>
+  <text x="1610" y="580" fill="#3E5A7E" font-size="13">radiale meters -- /proc live</text>
+
+  <g transform="translate(1512,760)">
+    <circle r="64" fill="#0A1424" stroke="#12294A"/>
+    <circle r="64" fill="none" stroke="#2683C0" stroke-width="6" stroke-dasharray="168.9 402.1" stroke-dashoffset="0" transform="rotate(-90)" stroke-linecap="round" filter="url(#glow)"/>
+    <g stroke="#3E5A7E" stroke-width="1">
+      <line x1="0" y1="-72" x2="0" y2="-78"/><line x1="51" y1="-51" x2="55" y2="-55"/><line x1="72" y1="0" x2="78" y2="0"/><line x1="51" y1="51" x2="55" y2="55"/><line x1="0" y1="72" x2="0" y2="78"/><line x1="-51" y1="51" x2="-55" y2="55"/><line x1="-72" y1="0" x2="-78" y2="0"/><line x1="-51" y1="-51" x2="-55" y2="-55"/>
+    </g>
+    <text y="-6" fill="#CDD8E1" font-size="22" font-weight="bold" text-anchor="middle">42%</text>
+    <text y="18" fill="#7A93B8" font-size="12" text-anchor="middle">CPU</text>
+  </g>
+  <g transform="translate(1666,760)">
+    <circle r="64" fill="#0A1424" stroke="#12294A"/>
+    <circle r="64" fill="none" stroke="#3270C5" stroke-width="6" stroke-dasharray="245.3 402.1" transform="rotate(-90)" stroke-linecap="round" filter="url(#glow)"/>
+    <g stroke="#3E5A7E" stroke-width="1">
+      <line x1="0" y1="-72" x2="0" y2="-78"/><line x1="51" y1="-51" x2="55" y2="-55"/><line x1="72" y1="0" x2="78" y2="0"/><line x1="51" y1="51" x2="55" y2="55"/><line x1="0" y1="72" x2="0" y2="78"/><line x1="-51" y1="51" x2="-55" y2="55"/><line x1="-72" y1="0" x2="-78" y2="0"/><line x1="-51" y1="-51" x2="-55" y2="-55"/>
+    </g>
+    <text y="-6" fill="#CDD8E1" font-size="22" font-weight="bold" text-anchor="middle">61%</text>
+    <text y="18" fill="#7A93B8" font-size="12" text-anchor="middle">RAM</text>
+  </g>
+  <g transform="translate(1512,915)">
+    <circle r="48" fill="#0A1424" stroke="#12294A"/>
+    <circle r="48" fill="none" stroke="#2683C0" stroke-width="5" stroke-dasharray="114.6 301.6" transform="rotate(-90)" stroke-linecap="round"/>
+    <text y="-2" fill="#CDD8E1" font-size="17" font-weight="bold" text-anchor="middle">38%</text>
+    <text y="16" fill="#7A93B8" font-size="11" text-anchor="middle">DSK</text>
+  </g>
+  <g transform="translate(1666,915)">
+    <circle r="48" fill="#0A1424" stroke="#12294A"/>
+    <circle r="48" fill="none" stroke="#3270C5" stroke-width="5" stroke-dasharray="262.4 301.6" transform="rotate(-90)" stroke-linecap="round"/>
+    <text y="-2" fill="#CDD8E1" font-size="17" font-weight="bold" text-anchor="middle">87%</text>
+    <text y="16" fill="#7A93B8" font-size="11" text-anchor="middle">BAT</text>
+  </g>
+  <text x="1440" y="640" fill="#7A93B8" font-size="13">NET</text>
+  <text x="1440" y="662" fill="#CDD8E1" font-size="14">^ 2.1 Mb/s</text>
+  <text x="1440" y="684" fill="#CDD8E1" font-size="14">v 8.4 Mb/s</text>
+  <text x="1440" y="712" fill="#2683C0" font-size="13">TS: ok -- 3 peers</text>
+  <text x="1780" y="640" fill="#7A93B8" font-size="13" text-anchor="end">goud = alleen merk</text>
+  <text x="1780" y="712" fill="#7A93B8" font-size="13" text-anchor="end">geen decor-draaimolens</text>
+
+  <rect x="0" y="1010" width="1920" height="70" fill="#0A1626"/>
+  <g font-size="14">
+    <rect x="20" y="1024" width="120" height="34" rx="4" fill="#12294A" stroke="#2683C0"/>
+    <text x="80" y="1046" fill="#2683C0" text-anchor="middle" font-weight="bold">WAND *</text>
+    <rect x="150" y="1024" width="120" height="34" rx="4" fill="#081120" stroke="#12294A"/>
+    <text x="210" y="1046" fill="#3E5A7E" text-anchor="middle">WERK o</text>
+    <rect x="280" y="1024" width="120" height="34" rx="4" fill="#081120" stroke="#12294A"/>
+    <text x="340" y="1046" fill="#3E5A7E" text-anchor="middle">VRIJ o</text>
+    <text x="430" y="1046" fill="#3E5A7E">SUPER+R wisselt modus -- hover = naar voren  |  klik = vastprikken  |  ESC = terug</text>
+
+    <rect x="1050" y="1018" width="150" height="52" rx="4" fill="#081120" stroke="#12294A"/>
+    <text x="1125" y="1038" fill="#7A93B8" font-size="11" text-anchor="middle">BLAD 2 -- WERK</text>
+    <rect x="1062" y="1046" width="60" height="18" fill="#0E2542" stroke="#3270C5"/>
+    <rect x="1128" y="1046" width="60" height="18" fill="#0E2542" stroke="#3270C5"/>
+    <text x="1125" y="1060" fill="#3E5A7E" font-size="9" text-anchor="middle"></text>
+
+    <rect x="1215" y="1018" width="150" height="52" rx="4" fill="#081120" stroke="#12294A"/>
+    <text x="1290" y="1038" fill="#7A93B8" font-size="11" text-anchor="middle">BLAD 3 -- VRIJ</text>
+    <rect x="1235" y="1044" width="50" height="24" fill="#0E2542" stroke="#3270C5" transform="rotate(-6 1260 1056)"/>
+    <rect x="1295" y="1046" width="50" height="22" fill="#0E2542" stroke="#2683C0" transform="rotate(4 1320 1057)"/>
+
+    <text x="1900" y="1046" fill="#7A93B8" text-anchor="end" font-size="13">zelfde look &amp; feel op alle bladen -- super+1/2/3</text>
+  </g>
+</svg>
