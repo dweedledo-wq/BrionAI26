@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" font-family="DejaVu Sans Mono, monospace">
+  <!-- BrionAI26 - FUI doelplaat (mockup, werkblad 1: Command Center) -->
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#131A21" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#0A0E12" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="#0A0E12"/>
+  <g stroke="#131A21" stroke-width="1">
+    <path d="M120 0V1080M240 0V1080M360 0V1080M480 0V1080M600 0V1080M720 0V1080M840 0V1080M960 0V1080M1080 0V1080M1200 0V1080M1320 0V1080M1440 0V1080M1560 0V1080M1680 0V1080M1800 0V1080"/>
+    <path d="M0 120H1920M0 240H1920M0 360H1920M0 480H1920M0 600H1920M0 720H1920M0 840H1920M0 960H1920"/>
+  </g>
+  <line x1="24" y1="540" x2="96" y2="540" stroke="#D8A878" stroke-width="2"/>
+  <line x1="1824" y1="540" x2="1896" y2="540" stroke="#00E5FF" stroke-width="2"/>
+  <rect x="0" y="1078" width="1920" height="2" fill="#F0C090"/>
+
+  <rect x="0" y="0" width="1920" height="36" fill="#131A21"/>
+  <g font-size="16">
+    <rect x="10" y="8" width="20" height="20" fill="none" stroke="#00E5FF" stroke-width="1.5"/>
+    <text x="16" y="23" fill="#00E5FF">1</text>
+    <rect x="38" y="8" width="20" height="20" fill="none" stroke="#6B8399" stroke-width="1"/>
+    <text x="44" y="23" fill="#6B8399">2</text>
+    <rect x="66" y="8" width="20" height="20" fill="none" stroke="#6B8399" stroke-width="1"/>
+    <text x="72" y="23" fill="#6B8399">3</text>
+    <text x="1840" y="24" fill="#F0C090" font-size="18">21:47</text>
+    <text x="1690" y="24" fill="#6B8399">BRIONAI26 // mission control</text>
+  </g>
+
+  <g>
+    <rect x="1460" y="60" width="420" height="620" fill="url(#glass)" stroke="#00E5FF" stroke-width="1"/>
+    <text x="1480" y="100" fill="#D8A878" font-size="22" font-weight="bold">BRIONAI26</text>
+    <text x="1480" y="126" fill="#6B8399" font-size="14">mission control</text>
+    <line x1="1480" y1="140" x2="1860" y2="140" stroke="#F0C090" stroke-width="1"/>
+
+    <text x="1480" y="180" fill="#00E5FF" font-size="16">SYS</text>
+    <text x="1560" y="180" fill="#6B8399" font-size="14">brionai26-pc</text>
+
+    <text x="1480" y="230" fill="#00E5FF" font-size="16">CPU</text>
+    <text x="1560" y="230" fill="#D7E6F0" font-size="16">42%</text>
+    <rect x="1620" y="216" width="220" height="16" fill="#0A0E12" stroke="#131A21"/>
+    <rect x="1620" y="216" width="92" height="16" fill="#D8A878"/>
+
+    <text x="1480" y="280" fill="#00E5FF" font-size="16">RAM</text>
+    <text x="1560" y="280" fill="#D7E6F0" font-size="16">61%</text>
+    <rect x="1620" y="266" width="220" height="16" fill="#0A0E12" stroke="#131A21"/>
+    <rect x="1620" y="266" width="134" height="16" fill="#D8A878"/>
+
+    <text x="1480" y="330" fill="#00E5FF" font-size="16">DSK</text>
+    <text x="1560" y="330" fill="#D7E6F0" font-size="16">38%</text>
+    <rect x="1620" y="316" width="220" height="16" fill="#0A0E12" stroke="#131A21"/>
+    <rect x="1620" y="316" width="84" height="16" fill="#D8A878"/>
+
+    <text x="1480" y="380" fill="#00E5FF" font-size="16">NET</text>
+    <text x="1560" y="380" fill="#D7E6F0" font-size="16">2.1 up 8.4 dn</text>
+
+    <text x="1480" y="430" fill="#00E5FF" font-size="16">BAT</text>
+    <text x="1560" y="430" fill="#D7E6F0" font-size="16">87%</text>
+
+    <line x1="1480" y1="460" x2="1860" y2="460" stroke="#F0C090" stroke-width="1"/>
+    <text x="1480" y="495" fill="#F0C090" font-size="15">TS</text>
+    <text x="1520" y="495" fill="#00FF9C" font-size="15">ok - 3 peers</text>
+    <text x="1480" y="525" fill="#F0C090" font-size="15">UPT</text>
+    <text x="1520" y="525" fill="#D7E6F0" font-size="15">3:12</text>
+    <text x="1480" y="555" fill="#F0C090" font-size="15">KRN</text>
+    <text x="1520" y="555" fill="#D7E6F0" font-size="15">6.12 amd64</text>
+    <text x="1480" y="620" fill="#6B8399" font-size="12">live data - /proc + tailscale</text>
+  </g>
+
+  <g>
+    <rect x="60" y="70" width="660" height="400" fill="url(#glass)" stroke="#00E5FF" stroke-width="1"/>
+    <text x="80" y="105" fill="#00E5FF" font-size="18" font-weight="bold">SYSDASH // hub: asus 100.96.40.22:9000</text>
+    <line x1="80" y1="118" x2="700" y2="118" stroke="#131A21"/>
+    <polyline points="80,380 130,360 180,370 230,330 280,345 330,300 380,320 430,280 480,295 530,260 580,275 630,240 680,255" fill="none" stroke="#00E5FF" stroke-width="2"/>
+    <polyline points="80,410 130,400 180,405 230,385 280,392 330,370 380,378 430,355 480,362 530,340 580,348 630,325 680,330" fill="none" stroke="#00FF9C" stroke-width="2"/>
+    <text x="80" y="440" fill="#6B8399" font-size="13">asus-desktop CPU 24h (cyan) - MEM (groen)</text>
+    <text x="560" y="105" fill="#00FF9C" font-size="14">SUPER+S</text>
+  </g>
+
+  <g>
+    <rect x="740" y="70" width="660" height="400" fill="url(#glass)" stroke="#D8A878" stroke-width="1"/>
+    <text x="760" y="105" fill="#D8A878" font-size="18" font-weight="bold">N8N // flows</text>
+    <line x1="760" y1="118" x2="1380" y2="118" stroke="#131A21"/>
+    <g font-size="16" fill="#D7E6F0">
+      <circle cx="772" cy="150" r="5" fill="#00FF9C"/><text x="790" y="156">backup-rotatie</text><text x="1330" y="156" fill="#00FF9C">actief</text>
+      <circle cx="772" cy="195" r="5" fill="#00FF9C"/><text x="790" y="201">mail-rondje</text><text x="1330" y="201" fill="#00FF9C">actief</text>
+      <circle cx="772" cy="240" r="5" fill="#FFB300"/><text x="790" y="246">rapport-generator</text><text x="1320" y="246" fill="#FFB300">wacht</text>
+      <circle cx="772" cy="285" r="5" fill="#00FF9C"/><text x="790" y="291">sync-sysdash</text><text x="1330" y="291" fill="#00FF9C">actief</text>
+    </g>
+    <text x="760" y="440" fill="#6B8399" font-size="13">PM2 watchdog - zelfherstellend</text>
+  </g>
+
+  <g>
+    <rect x="60" y="490" width="660" height="400" fill="url(#glass)" stroke="#D8A878" stroke-width="1"/>
+    <text x="80" y="525" fill="#D8A878" font-size="18" font-weight="bold">TERMINAL // dev</text>
+    <line x1="80" y1="538" x2="700" y2="538" stroke="#131A21"/>
+    <g font-size="15" fill="#D7E6F0">
+      <text x="80" y="570"><tspan fill="#00FF9C">$</tspan> pm2 status</text>
+      <text x="100" y="600" fill="#6B8399">n8n          online  4121  3.2%</text>
+      <text x="100" y="625" fill="#6B8399">sysdash      online  4088  0.8%</text>
+      <text x="80" y="670"><tspan fill="#00FF9C">$</tspan> tailscale status --self</text>
+      <text x="100" y="700" fill="#6B8399">100.96.40.22  asus-desktop  linux  -</text>
+      <text x="80" y="745"><tspan fill="#00FF9C">$</tspan> _</text>
+    </g>
+  </g>
+
+  <g>
+    <rect x="740" y="490" width="660" height="400" fill="url(#glass)" stroke="#00E5FF" stroke-width="1"/>
+    <text x="760" y="525" fill="#00E5FF" font-size="18" font-weight="bold">STATUSWAND // machines via sysdash hub</text>
+    <line x1="760" y1="538" x2="1380" y2="538" stroke="#131A21"/>
+    <g font-size="16">
+      <rect x="760" y="560" width="300" height="140" fill="#0A0E12" stroke="#131A21"/>
+      <text x="775" y="590" fill="#F0C090">ASUS-DESKTOP</text>
+      <text x="775" y="615" fill="#D7E6F0">CPU 24%</text>
+      <rect x="860" y="602" width="180" height="12" fill="#0A0E12" stroke="#131A21"/>
+      <rect x="860" y="602" width="53" height="12" fill="#00FF9C"/>
+      <text x="775" y="645" fill="#D7E6F0">MEM 41%</text>
+      <text x="775" y="680" fill="#00FF9C" font-size="13">ONLINE - hub</text>
+
+      <rect x="1080" y="560" width="300" height="140" fill="#0A0E12" stroke="#131A21"/>
+      <text x="1095" y="590" fill="#F0C090">BRIONAI26-PC</text>
+      <text x="1095" y="615" fill="#D7E6F0">CPU 42%</text>
+      <rect x="1180" y="602" width="180" height="12" fill="#0A0E12" stroke="#131A21"/>
+      <rect x="1180" y="602" width="76" height="12" fill="#00FF9C"/>
+      <text x="1095" y="645" fill="#D7E6F0">MEM 61%</text>
+      <text x="1095" y="680" fill="#00FF9C" font-size="13">ONLINE - agent</text>
+
+      <rect x="760" y="720" width="300" height="140" fill="#0A0E12" stroke="#131A21"/>
+      <text x="775" y="750" fill="#F0C090">LAPTOP</text>
+      <text x="775" y="775" fill="#D7E6F0">CPU 11%</text>
+      <rect x="860" y="762" width="180" height="12" fill="#0A0E12" stroke="#131A21"/>
+      <rect x="860" y="762" width="20" height="12" fill="#00FF9C"/>
+      <text x="775" y="805" fill="#D7E6F0">MEM 33%</text>
+      <text x="775" y="840" fill="#00FF9C" font-size="13">ONLINE - agent</text>
+
+      <rect x="1080" y="720" width="300" height="140" fill="#0A0E12" stroke="#FFB300" stroke-dasharray="4,2"/>
+      <text x="1095" y="750" fill="#FFB300">+ NIEUWE MACHINE</text>
+      <text x="1095" y="790" fill="#6B8399" font-size="13">install-agent.sh</text>
+    </g>
+  </g>
+
+  <g font-size="15">
+    <text x="60" y="1030" fill="#6B8399">SUPER+1/2/3 werkblad</text>
+    <text x="330" y="1030" fill="#F0C090">SUPER+S</text><text x="440" y="1030" fill="#6B8399">sysdash</text>
+    <text x="570" y="1030" fill="#F0C090">SUPER+C/G/M/A</text><text x="740" y="1030" fill="#6B8399">claude / chatgpt / mistral / gemini</text>
+    <text x="1090" y="1030" fill="#F0C090">SUPER+E</text><text x="1190" y="1030" fill="#6B8399">vs code</text>
+    <text x="1330" y="1030" fill="#F0C090">SUPER+T</text><text x="1430" y="1030" fill="#6B8399">terminal</text>
+  </g>
+</svg>
