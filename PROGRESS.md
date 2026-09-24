@@ -41,6 +41,10 @@
 - `libxcb-cursor0` expliciet toegevoegd aan de installer-pakketlijst
   (Qt6 xcb-plugin vereist het; voorkomt een leesbare crash op sommige
   mirrors waar het niet als dependency meekomt).
+- **Build-bewijs libxcb-cursor0 + typo-fix:** CI-run 36065037996 op
+  `vibe/fui-staalblauw-8404e4` geslaagd — Release `iso-20260924-221326`
+  (SHA256 8888e016…a67ad). `bin/apply-desktop` blob-exact geverifieerd
+  (91f8456) gelijk aan de VM-bewezen versie.
 
 ## 2026-09-24 — GRUB-THEMA + FONTFIX + MERKLOGO BEWEZEN ✅
 
