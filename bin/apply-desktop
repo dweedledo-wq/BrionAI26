@@ -26,6 +26,7 @@ lightdm
 lightdm-gtk-greeter
 plymouth
 plymouth-themes
+imagemagick
 gnome-themes-extra
 adwaita-icon-theme
 fonts-jetbrains-mono
@@ -97,8 +98,15 @@ plymouth-set-default-theme brionai26
 EOF
 chmod 0755 "$HOOKS/2100-set-plymouth-theme.chroot"
 
-# 1e2) xfwm4-thema BrionAI26: themerc + hook uit bin/branding/.
+# 1e1b) Mission-control palet + artwork-generator (live-hook, chroot):
+# kleuren uit brand/theme/mission-control.conf zijn leidend; de hook
+# genereert splash-balken + staalblauwe wallpaper met ImageMagick.
 mkdir -p "$CFG/config/includes.chroot/usr/share/brionai26"
+cp "$HERE/../brand/theme/mission-control.conf" "$CFG/config/includes.chroot/usr/share/brionai26/mission-control.conf"
+cp "$BRAND/generate-artwork.chroot" "$HOOKS/2150-generate-artwork.chroot"
+chmod 0755 "$HOOKS/2150-generate-artwork.chroot"
+
+# 1e2) xfwm4-thema BrionAI26: themerc + hook uit bin/branding/.
 cp "$BRAND/xfwm4-themerc" "$CFG/config/includes.chroot/usr/share/brionai26/xfwm4-themerc"
 cp "$BRAND/build-xfwm4-theme.chroot" "$HOOKS/2200-build-xfwm4-theme.chroot"
 chmod 0755 "$HOOKS/2200-build-xfwm4-theme.chroot"
@@ -166,6 +174,18 @@ submenu 'Geavanceerde opties ...' --hotkey=u {
 }
 EOF
 
+# 1f2b) GRUB-theming: splash.svg (800x600, wordt door binary_bootloader_splash
+# naar splash.png geconverteerd met rsvg-convert) + live-theme/theme.txt.
+# theme.cfg uit de live-build-template activeert het thema als splash.png bestaat.
+SRC_GRUB="$HERE/../config/bootloaders/grub-pc"
+if [ -f "$SRC_GRUB/splash.svg" ]; then
+    cp "$SRC_GRUB/splash.svg" "$GRUBMENU/splash.svg"
+fi
+if [ -f "$SRC_GRUB/live-theme/theme.txt" ]; then
+    mkdir -p "$GRUBMENU/live-theme"
+    cp "$SRC_GRUB/live-theme/theme.txt" "$GRUBMENU/live-theme/theme.txt"
+fi
+
 # 1f3) Install-modus: autostart-wrapper die Calamares start als de GRUB-optie
 # "BrionAI26 installeren" gekozen was (brionai26.install=1 op de kernel-cmdline).
 # calamares-install-debian (Debian-wrapper) regelt fstab-backup + wachtwoordloze
@@ -203,12 +223,10 @@ else
     exit 3
 fi
 
-# 2b) Wallpaper: het logo als achtergrond op alle 3 werkbladen.
+# 2b) Wallpaper: staalblauwe mission-control-wand gegenereerd door de
+# 2150-artwork-hook (geen logo-muur); op alle 3 werkbladen gelijk.
 SKEL="$CFG/config/includes.chroot/etc/skel"
-if [ -f "$LOGO" ]; then
-    mkdir -p "$CFG/config/includes.chroot/usr/share/backgrounds/brionai26"
-    cp "$LOGO" "$CFG/config/includes.chroot/usr/share/backgrounds/brionai26/wallpaper.png"
-fi
+mkdir -p "$CFG/config/includes.chroot/usr/share/backgrounds/brionai26"
 mkdir -p "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml"
 cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" <<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
