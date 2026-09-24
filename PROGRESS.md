@@ -5,11 +5,25 @@
 
 ## Volgende stappen
 
-1. SysDash-PWA (sysdash-brionize, private repo) als Command Center-tegel
-   i.p.v. Conky-HUD.
+1. SysDash op de ISO: server meebouwen (sysdash-web op poort 9000) of
+   verbinding met bestaande hub — keuze Brionize.
 2. Live-test nieuwste ISO: GRUB-menu (live/installeren), tegelwand +
    hover, splash, first-boot wizard na installatie.
 3. Calamares-installatie → v1.0-tag.
+
+## 2026-09-24 — SYSDASH-TEGEL (taak 2): hotkey klaar, CI-bewijs geleverd
+
+- Repo ligt op `brionize-nl/sysdash` (publiek; naam in PROGRESS was
+  onjuist — geen installatie van de GitHub App nodig).
+- **CI-run 35973564731 geslaagd** op branch `vibe/sysdash-voorbereiding-8404e4`
+  (eerdere bewijs-run 35928301094 voor de placeholder-versie):
+  hotkey **Super+S** opent het sysdash-dashboard als PWA-tegel op het
+  Command Center (werkblad 1) — URL `http://localhost:9000`, de poort
+  uit `sysdash-web.service` (statische webserver van de PWA).
+- Open punt (keuze Brionize): draait sysdash-straks mee óp de ISO
+  (server in de live-build) of verbindt de tegel met de bestaande hub
+  op de Asus (via tunnel/Tailscale)? Conky-HUD blijft voorlopig naast
+  sysdash staan tot dat bewezen is.
 
 ## 2026-09-23 — GRUB-bootmenu (taak 1) BEWEZEN ✅
 
