@@ -36,4 +36,95 @@
   placeholder; apply-desktop injecteert het logo bij build-tijd uit brand/.
   PR #7 met de volledige serie staat open.
 
-## 2026-09-24 — SYSDASH-TEGEL (taak 2) BEWOZEN ✅
+## 2026-09-24 — SYSDASH-TEGEL (taak 2) BEWEZEN ✅
+
+- Sjabloon-repo: `brionize-nl/sysdash` (publiek); de draaiende hub staat
+  op de Asus-desktop (private repo `sysdash-brionize` volgens Brionize —
+  voor de tegel niet nodig, de hub is bereikbaar via Tailscale).
+- **Hub-besluit vastgesteld (Brionize):** de tegel verbindt met de
+  **bestaande hub op de Asus** — Super+S opent
+  `http://100.96.40.22:9000` (Tailscale-IP van de Asus, poort 9000 uit
+  `sysdash-web.service`). Tailscale gekozen omdat het IP stabiel is;
+  Cloudflare Quick Tunnel is afgewezen (roterende URL's, onbruikbaar
+  voor een vaste hotkey). sysdash draait dus niet mee op de ISO.
+- **CI-run 35984530846 geslaagd op main** (merge PR #4) — Release
+  `iso-20260924-100944` met de definitieve Tailscale-hotkey. Eerdere
+  bewijs-runs: 35981095804 op de branch (Tailscale-versie, commit
+  `4818014d`), 35973564731 (localhost-versie) en 35928301094
+  (placeholder-versie):
+  hotkey **Super+S** opent het sysdash-dashboard als PWA-tegel op het
+  Command Center (werkblad 1). Na een kopieerfout in de Super+G-regel
+  (commit `fd754540`) is die hersteld en blob-exact geverifieerd.
+- Conky-HUD blijft voorlopig naast sysdash staan tot de live-test.
+- Voorwaarde: de doel-pc moet lid zijn van de Tailscale (de hub draait op
+  de Asus; pc + laptop worden door sysdash gemonitord).
+
+## 2026-09-23 — GRUB-bootmenu (taak 1) BEWEZEN ✅
+
+- **CI-run 35926599028 geslaagd op main** (merge PR #1; eerdere bewijs-run
+  35924803553 op de branch) — Release `iso-20260923-221840` (1471 MB):
+  - Eigen `config/bootloaders/grub-pc/grub.cfg` (officiële live-build
+  override-route): menu-opties "BrionAI26 live starten" (default, hotkey l)
+  en "BrionAI26 installeren" (hotkey i) + submenu met fail-safe,
+  integriteitscontrole en UEFI-settings.
+- "BrionAI26 installeren" zet `brionai26.install=1` op de kernel-cmdline;
+  autostart-wrapper `brionai26-install-mode` start dan na de live-login
+  `calamares-install-debian` (Debian-wrapper: fstab-backup + pkexec).
+- `lb config --bootloaders "grub-pc,grub-efi"`: BIOS-default van
+  live-build is syslinux — nu tonen BIOS én UEFI hetzelfde GRUB-menu.
+- `sudo` toegevoegd aan de desktop-pakketlijst: zonder sudo geeft
+  live-config de live-gebruiker geen NOPASSWD-sudo + polkit-YES, waarmee
+  pkexec (Calamares) in de live-sessie zou blokkeren.
+- First-boot wizard start niet meer in de live-sessie (check op
+  `boot=live` op de kernel-cmdline): alleen op de geïnstalleerde pc.
+- Droogrun + lokale simulatie van binary_grub_cfg: menu correct
+  gegenereerd met alle placeholders gevuld.
+
+## 2026-09-23 — FASE 5 BEWEZEN: first-boot wizard ✅
+
+- **CI-run 35905142233 geslaagd** (commit `743ab3c`):
+  - Wizard (zenity, geverifieerd in trixie) vraagt bij eerste login om
+    git-identiteit en optionele AI-sleutels (verborgen invoer, chmod 600,
+    ~/.config/brionai26/*.key). Draait eenmalig via marker-bestand.
+  - Geplaatst als /usr/bin/brionai26-firstboot + autostart-entry (XFCE).
+  - GRUB-menu toont voortaan "BrionAI26" (GRUB_DISTRIBUTOR) + quiet splash.
+  - README uitgebreid: download-link, hotkey-kaart, installatie-instructies.
+- Droogrun ving twee ontbrekende mkdir's (usr/bin, autostart) vóór de push;
+  blob-verificatie bevestigde de push identiek aan de geteste versie.
+
+## 2026-09-23 — LOOK-POLISH 2: gouden vensterdecoratie ✅
+
+- **CI-run 35898371987 geslaagd** (Release `iso-20260923-175953`, 1395 MB):
+  eigen xfwm4-thema "BrionAI26" (gouden titeltekst #F0C090 op donker),
+  gebouwd door live-hook uit het kleurveranderbare Default-thema.
+
+## 2026-09-23 — FASE 4 BEWEZEN: Calamares installer ✅
+
+- **CI-run 35894259863 geslaagd**: Calamares 3.3.14 + settings-debian,
+  "Installeer BrionAI26"-icoon op de live-desktop (pkexec calamares).
+
+## 2026-09-23 — LOOK-POLISH 1: sci-fi HUD ✅
+
+- **CI-run 35896414869 geslaagd**: JetBrains Mono overal, HUD-symbolen
+  (◉ SYS/CPU/RAM/DSK/NET/BAT), batterij-tegel.
+
+## 2026-09-23 — FASE 3 BEWEZEN: Dev Studio + VS Code ✅
+
+- **CI-run 35885427596 geslaagd** (1328 MB): VS Code (Microsoft apt-repo),
+  Geany, git/gitg/tmux/python/node/npm. Publieke Release-download toegevoegd.
+
+## 2026-09-23 — FASE 2 AF: werkbladen + AI Matrix ✅
+
+- **CI-run 35871715186**: 3 werkbladen, Super+1/2/3, Super+C/G/M/A PWA's.
+- **CI-run 35855421072** (738,5 MB): eerste desktop-ISO, na conky-fix
+  (conky is virtueel in trixie; conky-all is de provider).
+
+## 2026-09-22 — FASE 1 BEWEZEN ✅
+
+- **CI-run 35791024492** (353 MB): eerste kale basis-ISO.
+
+## 2026-09-22 (start)
+
+- Project gestart. Doel: eigen Linux — Debian kaal strippen, eigen inrichting
+  (3 werkbladen, AI-tools, devstack), Calamares-installer, first-boot wizard.
+  "Eerst bewijs, dan verder": elke fase eindigt met een bewezen build.
