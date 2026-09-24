@@ -11,6 +11,7 @@
       <property name="&lt;Super&gt;a" type="string" value="wmctrl -s 1 &amp;&amp; chromium --app=https://gemini.google.com"/>
       <property name="&lt;Super&gt;e" type="string" value="wmctrl -s 2 &amp;&amp; code"/>
       <property name="&lt;Super&gt;t" type="string" value="wmctrl -s 2 &amp;&amp; xfce4-terminal"/>
+      <property name="&lt;Super&gt;s" type="string" value="wmctrl -s 0 &amp;&amp; chromium --app=http://100.96.40.22:9000"/>
       <property name="override" type="bool" value="false"/>
     </property>
   </property>

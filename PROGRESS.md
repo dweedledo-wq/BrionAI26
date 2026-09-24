@@ -5,11 +5,33 @@
 
 ## Volgende stappen
 
-1. SysDash-PWA (sysdash-brionize, private repo) als Command Center-tegel
-   i.p.v. Conky-HUD.
-2. Live-test nieuwste ISO: GRUB-menu (live/installeren), tegelwand +
-   hover, splash, first-boot wizard na installatie.
-3. Calamares-installatie → v1.0-tag.
+1. Live-test nieuwste ISO: GRUB-menu (live/installeren), SysDash-tegel
+   (Super+S → hub op de Asus), tegelwand + hover, splash, first-boot
+   wizard na installatie.
+2. Calamares-installatie → v1.0-tag.
+3. Na v1.0-bewijsvoering: repo privé zetten (besluit Brionize; let op:
+   private repo's krijgen geen gratis Actions-minuten meer).
+
+## 2026-09-24 — SYSDASH-TEGEL (taak 2): hotkey klaar, CI-bewijs geleverd
+
+- Sjabloon-repo: `brionize-nl/sysdash` (publiek); de draaiende hub staat
+  op de Asus-desktop (private repo `sysdash-brionize` volgens Brionize —
+  voor de tegel niet nodig, de hub is bereikbaar via Tailscale).
+- **Hub-besluit vastgesteld (Brionize):** de tegel verbindt met de
+  **bestaande hub op de Asus** — Super+S opent
+  `http://100.96.40.22:9000` (Tailscale-IP van de Asus, poort 9000 uit
+  `sysdash-web.service`). Tailscale gekozen omdat het IP stabiel is;
+  Cloudflare Quick Tunnel is afgewezen (roterende URL's, onbruikbaar
+  voor een vaste hotkey). sysdash draait dus niet mee op de ISO.
+- **CI-run 35981095804 geslaagd** op branch `vibe/sysdash-voorbereiding-8404e4`
+  (commit `4818014d`, Tailscale-versie; eerdere bewijs-runs 35973564731
+  voor de localhost-versie en 35928301094 voor de placeholder-versie):
+  hotkey **Super+S** opent het sysdash-dashboard als PWA-tegel op het
+  Command Center (werkblad 1). Na een kopieerfout in de Super+G-regel
+  (commit `fd754540`) is die hersteld en blob-exact geverifieerd.
+- Conky-HUD blijft voorlopig naast sysdash staan tot de live-test.
+- Voorwaarde: de doel-pc moet lid zijn van de Tailscale (de hub draait op
+  de Asus; pc + laptop worden door sysdash gemonitord).
 
 ## 2026-09-23 — GRUB-bootmenu (taak 1) BEWEZEN ✅
 
