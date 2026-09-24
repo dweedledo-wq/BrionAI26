@@ -64,3 +64,71 @@ cat > "$CFG/config/package-lists/brionai26-wizard.list.chroot" <<'EOF'
 # BrionAI26 first-boot wizard (fase 5)
 zenity
 EOF
+
+# 1c) VS Code via officiële Microsoft apt-repo (live-hook in chroot).
+HOOKS="$CFG/config/hooks/live"
+mkdir -p "$HOOKS"
+cat > "$HOOKS/2000-install-vscode.chroot" <<'EOF'
+#!/bin/sh
+set -eu
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
+    -o /etc/apt/trusted.gpg.d/microsoft.asc
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" \
+    > /etc/apt/sources.list.d/vscode.list
+apt-get update
+apt-get install --yes --no-install-recommends code
+EOF
+chmod 0755 "$HOOKS/2000-install-vscode.chroot"
+
+# 1d) BrionAI26 Plymouth-splash: thema uit bin/branding/ + logo uit brand/.
+PLYM="$CFG/config/includes.chroot/usr/share/plymouth/themes/brionai26"
+mkdir -p "$PLYM"
+cp "$BRAND/brionai26.plymouth" "$PLYM/brionai26.plymouth"
+cp "$BRAND/brionai26.script" "$PLYM/brionai26.script"
+if [ -f "$LOGO" ]; then
+    cp "$LOGO" "$PLYM/logo.png"
+else
+    echo "WAARSCHUWING: brand-logo niet gevonden — splash zonder logo" >&2
+fi
+
+# 1e) Plymouth-thema activeren via live-hook.
+cat > "$HOOKS/2100-set-plymouth-theme.chroot" <<'EOF'
+#!/bin/sh
+set -eu
+plymouth-set-default-theme brionai26
+EOF
+chmod 0755 "$HOOKS/2100-set-plymouth-theme.chroot"
+
+# 1e1b) Mission-control palet + artwork-generator (live-hook, chroot):
+# kleuren uit brand/theme/mission-control.conf zijn leidend; de hook
+# genereert splash-balken + staalblauwe wallpaper met ImageMagick.
+mkdir -p "$CFG/config/includes.chroot/usr/share/brionai26"
+cp "$HERE/../brand/theme/mission-control.conf" "$CFG/config/includes.chroot/usr/share/brionai26/mission-control.conf"
+cp "$BRAND/generate-artwork.chroot" "$HOOKS/2150-generate-artwork.chroot"
+chmod 0755 "$HOOKS/2150-generate-artwork.chroot"
+
+# 1e2) xfwm4-thema BrionAI26: themerc + hook uit bin/branding/.
+cp "$BRAND/xfwm4-themerc" "$CFG/config/includes.chroot/usr/share/brionai26/xfwm4-themerc"
+cp "$BRAND/build-xfwm4-theme.chroot" "$HOOKS/2200-build-xfwm4-theme.chroot"
+chmod 0755 "$HOOKS/2200-build-xfwm4-theme.chroot"
+
+# 1e3) First-boot wizard (fase 5): script + autostart-entry.
+mkdir -p "$CFG/config/includes.chroot/usr/bin"
+cp "$BRAND/firstboot-wizard.sh" "$CFG/config/includes.chroot/usr/bin/brionai26-firstboot"
+chmod 0755 "$CFG/config/includes.chroot/usr/bin/brionai26-firstboot"
+WIZARD_AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-firstboot.desktop"
+mkdir -p "$(dirname "$WIZARD_AUTO")"
+cat > "$WIZARD_AUTO" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=BrionAI26 First-Boot Wizard
+Exec=/usr/bin/brionai26-firstboot
+OnlyShowIn=XFCE;
+EOF
+
+# 1f) GRUB: quiet splash + BrionAI26-menu-tekst.
+mkdir -p "$CFG/config/includes.chroot/etc/default/grub.d"
+cat > "$CFG/config/includes.chroot/etc/default/grub.d/brionai26.cfg" <<'EOF'
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+GRUB_DISTRIBUTOR="BrionAI26"
+EOF
