@@ -6,7 +6,7 @@
       <property name="&lt;Super&gt;2" type="string" value="wmctrl -s 1"/>
       <property name="&lt;Super&gt;3" type="string" value="wmctrl -s 2"/>
       <property name="&lt;Super&gt;c" type="string" value="wmctrl -s 1 &amp;&amp; chromium --app=https://claude.ai"/>
-      <property name="&lt;Super&gt;g" type="string" value="wmctrl -s 1 &amp;&amp; chromium --amp;&amp; chromium --app=https://chat.openai.com"/>
+      <property name="&lt;Super&gt;g" type="string" value="wmctrl -s 1 &amp;&amp; chromium --app=https://chat.openai.com"/>
       <property name="&lt;Super&gt;m" type="string" value="wmctrl -s 1 &amp;&amp; chromium --app=https://chat.mistral.ai"/>
       <property name="&lt;Super&gt;a" type="string" value="wmctrl -s 1 &amp;&amp; chromium --app=https://gemini.google.com"/>
       <property name="&lt;Super&gt;e" type="string" value="wmctrl -s 2 &amp;&amp; code"/>
