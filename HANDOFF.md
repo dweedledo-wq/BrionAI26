@@ -110,5 +110,6 @@ BLUEPRINT.md voor het volledige productdoel en de architectuur.
 
 Zie PROGRESS.md ("Volgende stappen"). Kern: **FUI Desktop v2 — eerst het
 ontwerp uitwerken en aan Brionize voorleggen, pas na zijn GO bouwen.**
-Daarnaast liggen de wallpaper/lightdm-fixes 3+4 klaar om te pushen,
-CI-bewijs op te leveren en in de VM te bewijzen (details in PROGRESS.md).
+De wallpaper/lightdm-fixes 1 t/m 4 zijn gepusht en CI-bewezen (Release
+`iso-20260925-140220`); open: VM-einde-bewijs live-wallpaper +
+autologin-risico (details in PROGRESS.md).
