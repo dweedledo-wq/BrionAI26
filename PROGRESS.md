@@ -9,13 +9,54 @@
    BLUEPRINT.md-hoofdstuk "FUI Desktop v2")**: de complete desktop-laag
    in één keer schoon ontwerpen en bouwen i.p.v. verder patchen. Start
    met het uitgewerkte ontwerp ter goedkeuring aan Brionize.
-2. VM-einde-bewijs live-wallpaper (Release `iso-20260925-140220`, zie
-   sectie hieronder) + autologin-risico verifiëren.
+2. CI-bewijs + VM-einde-bewijs van de wallpaper/autologin-fix-branch
+   (zie sectie 2026-09-25 "WALLPAPER/AUTOLOGIN EINDELIJK OPGELOST"):
+   PR met fixes 1 t/m 4 + timeout=0 + set-wallpaper-autostart mergen,
+   daarna frisse-boot VM-check (autologin → staalblauwe desktop).
 3. Live-test nieuwste ISO op de doel-pc (Asus): SysDash-tegel
    (Super+S → hub), tegelwand + hover, splash, first-boot wizard.
 4. Calamares-installatie op de Asus → daarna v1.0-tag zetten.
 5. Na v1.0: repo privé zetten (besluit Brionize; let op: private repo's
    krijgen geen gratis Actions-minuten meer).
+
+## 2026-09-25 — WALLPAPER/AUTOLOGIN EINDELIJK OPGELOST (root causes VM-bewezen) ✅
+
+VM-onderzoek met Release `iso-20260925-140220` (SHA256 geverifieerd
+`ea73738d…9268`) in QEMU (frisse boot, geen hergebruikte sessie-state):
+
+1. **Autologin-faal (greeter bleef hangen):** lightdm-log toonde
+   "User user authorized" maar ná de auth startte de sessie niet — de
+   greeter-countdown (`autologin-user-timeout=3`) blokkeerde. Met
+   **`autologin-user-timeout=0`** start de XFCE-sessie direct (bewezen:
+   desktop volledig aanwezig zonder handmatige login).
+2. **Wallpaper-faal (teal i.p.v. staalblauw):** xfdesktop 4.20 (trixie)
+   leest de backdrop uitsluitend onder de **echte xrandr-output-naam**
+   (`/backdrop/screen0/monitorVirtual-1/workspace0/last-image`; in de
+   QEMU-VM is dat `Virtual-1`, op echte hardware bv. `VGA-0`/`eDP-1`).
+   Onze statische skel-XML met `monitor0`/`monitor1` wordt genegeerd,
+   xfdesktop valt terug op de hardcoded Debian-default
+   `xfce-teal.svg` (gradient (0,52,69)). Bevestigd door: rode
+   test-wallpaper op alle xfconf-monitor0/1-paden → scherm bleef teal;
+   zelfde bestand onder `monitorVirtual-1` → scherm werd direct rood,
+   daarna staalblauw met de echte wallpaper (77,9% BG_DEEP-pixels,
+   teal 0%). Na volledige lightdm-herstart blijft het bewijs staan;
+   de 16-bit ImageMagick-PNG laadt prima (geen converter nodig).
+3. **Fix doorgevoerd:** nieuw autostart-script
+   `bin/branding/brionai26-set-wallpaper` (draait eenmalig per gebruiker
+   bij XFCE-login; zet last-image/image-style voor alle xrandr-outputs
+   en werkbladen 0-2) + `autologin-user-timeout=3` → `0` in
+   `bin/apply-desktop`. Fixes 1+2 (greeter-config, monitor0-level) zijn
+   per cherry-pick meegenomen op de fix-branch.
+4. **Autologin-risico geïnstalleerde pc — geverifieerd laag:** de
+   Calamares `displaymanager`-module (DMlightdm.set_autologin in de
+   officiële bron) vervangt bij installatie elke `autologin-user=`-regel
+   door `#autologin-user=` (tenzij de gebruiker expliciet autologin
+   aanvinkt). De achterblijvende `autologin-user-timeout=0` is zonder
+   `autologin-user` inert. Geen live-only-variant nodig; wel bij de
+   Asus-live-test letten op de login-flow na installatie.
+5. Droogrun `bin/apply-desktop` op een verse config-map: alle onderdelen
+   gegenereerd (set-wallpaper-script + autostart-entry + lightdm.conf
+   met timeout=0 + desktop-base-symlinks + skel-XML met monitor1-blok).
 
 ## 2026-09-25 — PR #7 NAAR MAIN GEMERGED + BEWEZEN ✅
 
