@@ -5,12 +5,16 @@
 
 ## Volgende stappen
 
-1. Live-test nieuwste ISO op de doel-pc (Asus): SysDash-tegel
+1. **FUI Desktop v2 — ontwerp eerst (productbesluit 2026-09-25, zie
+   BLUEPRINT.md-hoofdstuk "FUI Desktop v2")**: de complete desktop-laag
+   in één keer schoon ontwerpen en bouwen i.p.v. verder patchen. Start
+   met het uitgewerkte ontwerp ter goedkeuring aan Brionize.
+2. Wallpaper/lightdm-fixes afronden (zie sectie hieronder): fix 3+4 in
+   `bin/apply-desktop` committen en pushen, CI-bewijs, VM-einde-bewijs.
+3. Live-test nieuwste ISO op de doel-pc (Asus): SysDash-tegel
    (Super+S → hub), tegelwand + hover, splash, first-boot wizard.
-   (GRUB-menu + logo + fontfix: bewezen; installatie-flow: bewezen, zie
-   hieronder.)
-2. v1.0-tag zetten (installatie-flow is volledig VM-bewezen).
-3. Na v1.0: repo privé zetten (besluit Brionize; let op: private repo's
+4. Calamares-installatie op de Asus → daarna v1.0-tag zetten.
+5. Na v1.0: repo privé zetten (besluit Brionize; let op: private repo's
    krijgen geen gratis Actions-minuten meer).
 
 ## 2026-09-25 — PR #7 NAAR MAIN GEMERGED + BEWEZEN ✅
@@ -20,6 +24,70 @@
   (merge commit `de42fac`).
 - **CI-run 36115003197 geslaagd op main** — Release `iso-20260925-090100`
   (SHA256 3e61027f…a018). Dit is de nieuwste bewezen main-ISO.
+
+## 2026-09-25 — WALLPAPER/LIGHTDM-ONDERZOEKE: ROOT CAUSES + FIXES (deels nog open)
+
+**Probleem (gemeld door Brionize):** live-sessie van ISO 090100 toont
+"gewoon Debian met een muisje" — teal achtergrond (0,52,69), geen
+BrionAI26-look. In de QEMU-VM gereproduceerd.
+
+**Drie root causes gevonden en gefixt (fix 1+2 gepusht, bewezen):**
+
+1. **xfdesktop (trixie) negeert het oude `workspace0/last-image`-schema.**
+   Het rendert via per-monitor properties
+   (`/backdrop/screen0/monitorX/image-path` + `image-show`). Onze
+   xfce4-desktop.xml stelde alleen het oude schema in → xfdesktop viel
+   terug op de desktop-base default (teal ceratopsian-theme).
+   **Fix 1 (commit `b291bb9`):** monitor-level properties toegevoegd aan
+   de xfce4-desktop.xml in `bin/apply-desktop`.
+2. **De lightdm default greeter is `lightdm-greeter` (kale tekst),** uit
+   `/usr/share/lightdm/lightdm.conf.d/01_debian.conf` — onze
+   lightdm-gtk-greeter.conf werd volledig genegeerd.
+   **Fix 2 (commit `30f30a3`):** eigen `/etc/lightdm/lightdm.conf` met
+   `[Seat:*]`-sectie: `greeter-session=lightdm-gtk-greeter` +
+   `user-session=xfce`.
+3. **xfdesktop gebruikt in de QEMU-GUI-sessie `monitor1`, niet
+   monitor0.** Zelfs met fix 1 zette de default `monitor1/image-path`
+   de desktop-base-teal. **Fix 4 (voorgesteld):** een `monitor1`-blok in
+   de xfce4-desktop.xml (identiek aan monitor0) + desktop-base
+   default-symlinks herijken:
+   `/usr/share/images/desktop-base/default` →
+   `/usr/share/backgrounds/brionai26/wallpaper.png` (idem
+   `desktop-background`) — zo valt élke fallback (greeter, xfdesktop)
+   op onze wallpaper.
+
+**Bewezen met Release `iso-20260925-124551`** (CI-run 36135699967 op
+`vibe/fui-staalblauw-8404e4`, SHA256 63d18395…f3a6c, fixes 1+2):
+lightdm-gtk-greeter draait op de staalblauwe wallpaper (pixel-bewijs
+(6,11,22) rond login-dialoog in de VM).
+
+**Fix 3 (autologin, lokaal voorbereid — nog niet gepusht):** door
+`user-session=xfce` wacht lightdm op handmatige login; greeter stond op
+verkeerde last-user. Oplossing: `autologin-user=user` +
+`autologin-user-timeout=3` in lightdm.conf. **Let op risico (punt 7
+hieronder):** deze regels staan in includes.chroot en belanden zo óók op
+de geïnstalleerde pc — overweeg een live-only-variant (live-config-hook
+of check op `boot=live`), óf verifieer dat Calamares'
+displaymanager-module ze wegwerkt bij installatie
+(`/etc/calamares/modules/displaymanager.conf` bestaat al).
+
+**Open punten (voor de volgende sessie):**
+1. Fix 3+4 in `bin/apply-desktop` afronden, committen en pushen (push
+   gaat via de GitHub App API-tool `github_app_create_or_update_file`,
+   blob-sha van bin/apply-desktop op de branch is nodig).
+2. CI-run naar groen volgen → nieuwe Release + SHA256.
+3. VM-einde-bewijs met de nieuwe ISO: live-auto-login → bureaublad met
+   staalblauwe wallpaper (pixel-check (6,11,22)) + Conky-HUD + paneel.
+4. VM-bevinding: xfconf-wijzigingen vanaf een serial-shell pakken niet
+   in de GUI-sessie (aparte D-Bus session bus) — gebruik altijd
+   `DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus` +
+   `DISPLAY=:0` + `XAUTHORITY=/home/user/.Xauthority` als je de GUI
+   remote wilt sturen. Zelfs daarmee weigerde xfdesktop in de test-VM
+   te herladen; xfdesktop hield de teal afbeelding vast tot een volledige
+   lightdm-herstart (desktop-base-symlinks stonden al goed). Er is nog
+   géén VM-bewijs dat de desktop na een frisse live-boot de wallpaper
+   toont — dat is het einde-bewijs dat nog moet worden geleverd.
+5. Autologin-risico (zie fix 3) verifiëren vóór de Asus-live-test.
 
 ## 2026-09-24 — CALAMARES-INSTALLATIE END-TO-END VM-BEWEZEN ✅
 
@@ -34,7 +102,7 @@
      ("Erase disk", vda 20 GiB gedetecteerd) → Users (brionize) →
      Summary → Install.
   4. Installatie voltooid: session.log `completion: succeeded`,
-     schrijfpartitie vda1 (ext4, 20 GiB) aangemaakt.
+     schijfpartitie vda1 (ext4, 20 GiB) aangemaakt.
   5. **Reboot van de geïnstalleerde schijf** (zonder ISO): branded
      lightdm-login (staalblauw #060B16, hostname brionai26).
   6. **Inloggen met de tijdens de installatie aangemaakte credentials
