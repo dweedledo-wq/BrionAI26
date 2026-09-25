@@ -13,6 +13,14 @@
 3. Na v1.0: repo privé zetten (besluit Brionize; let op: private repo's
    krijgen geen gratis Actions-minuten meer).
 
+## 2026-09-25 — PR #7 NAAR MAIN GEMERGED + BEWEZEN ✅
+
+- PR #7 (GRUB-fontfix + merklogo in splash + FUI v2 staalblauw-serie +
+  installatie-flow-bewijs + libxcb-cursor0) gemerged door Brionize
+  (merge commit `de42fac`).
+- **CI-run 36115003197 geslaagd op main** — Release `iso-20260925-090100`
+  (SHA256 3e61027f…a018). Dit is de nieuwste bewezen main-ISO.
+
 ## 2026-09-24 — CALAMARES-INSTALLATIE END-TO-END VM-BEWEZEN ✅
 
 - **Volledige flow doorgelopen in QEMU** met Release `iso-20260924-182536`
@@ -68,7 +76,7 @@
 - **Transport-les:** de 26KB base64-logo-blob in splash.svg raakte corrupt
   over de push-API (240 afwijkingen). Oplossing: `@BRIONAI26_LOGO_B64@`-
   placeholder; apply-desktop injecteert het logo bij build-tijd uit brand/.
-  PR #7 met de volledige serie staat open.
+  PR #7 is inmiddels naar main gemerged.
 
 ## 2026-09-24 — SYSDASH-TEGEL (taak 2) BEWEZEN ✅
 
