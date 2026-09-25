@@ -11,6 +11,37 @@ IMAGE=debian:stable
 
 mkdir -p build dist
 
+# Referentiefoto (FUI v2.1: foto-is-het-scherm) ophalen voor de build als hij
+# nog niet in de werkboom staat. De foto staat als binaire blob in de repo op
+# branch fui-doelplaat (geupload door Brionize). Fetchen + SHA256-check is
+# verliesvrij; b64-tekst-transport over de push-API is dat bewijsbaar niet.
+FOTO="brand/reference/WhatsApp Image 2026-09-24 at 14.15.02.jpeg"
+FOTO_SHA256="77d881179e0b319661b29c1800fae11a6cd229800b949408ee864118ce3caa51"
+if [ ! -f "$FOTO" ]; then
+    mkdir -p "$(dirname "$FOTO")"
+    for poging in 1 2 3; do
+        if curl -fsSL --retry 2 -o "$FOTO" \
+            "https://raw.githubusercontent.com/dweedledo-wq/BrionAI26/fui-doelplaat/brand/reference/WhatsApp%20Image%202026-09-24%20at%2014.15.02.jpeg" \
+            && echo "$FOTO_SHA256  $FOTO" | sha256sum -c - >/dev/null 2>&1; then
+            echo "referentiefoto opgehaald + SHA256 geverifieerd (poging $poging)"
+            break
+        fi
+        rm -f "$FOTO"
+        if [ "$poging" -eq 3 ]; then
+            echo "referentiefoto ophalen faalde na 3 pogingen" >&2
+            exit 100
+        fi
+        sleep 5
+    done
+else
+    echo "$FOTO_SHA256  $FOTO" | sha256sum -c - >/dev/null 2>&1 \
+        || { echo "referentiefoto in werkboom heeft verkeerde SHA256" >&2; exit 100; }
+fi
+
+# apply-desktop kopieert de foto vanaf deze vast plek naar de ISO.
+mkdir -p bin/branding/fui-shell/assets
+cp "$FOTO" bin/branding/fui-shell/assets/referentie.jpg
+
 docker run --privileged --rm \
     --workdir /app \
     --volume "${PWD}/bin:/app/bin" \
