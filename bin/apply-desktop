@@ -302,6 +302,11 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" <<'EOF'
 </channel>
 EOF
 mkdir -p "$CFG/config/includes.chroot/etc/lightdm"
+cat > "$CFG/config/includes.chroot/etc/lightdm/lightdm.conf" <<'EOF'
+[Seat:*]
+greeter-session=lightdm-gtk-greeter
+user-session=xfce
+EOF
 cat > "$CFG/config/includes.chroot/etc/lightdm/lightdm-gtk-greeter.conf" <<'EOF'
 [greeter]
 background=/usr/share/backgrounds/brionai26/wallpaper.png
