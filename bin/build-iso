@@ -1,8 +1,6 @@
 #!/bin/sh
-
 # Draait binnen een privileged debian:stable container (zie bin/build-iso-docker).
 # Bouwt de BrionAI26 ISO: fase 1 (basis) + fase 2 (mission-control desktop).
-
 set -eu
 
 export DEBIAN_FRONTEND=noninteractive
@@ -20,10 +18,10 @@ until apt-get update; do
 done
 
 n=0
-until apt-get install --yes --no-install-recommends live-build; do
+until apt-get install --yes --no-install-recommends live-build imagemagick; do
     n=$((n+1))
     if [ "$n" -ge 3 ]; then
-        echo "apt-get install faalde na 3 pogingen" >&2
+        echo "apt-get install faalde" >&2
         exit 100
     fi
     echo "apt-get install poging $n faalde — opnieuw na 10s" >&2
@@ -58,6 +56,7 @@ echo 0 > "$STATUS"
 (lb build 2>&1 || echo $? > "$STATUS") | tee live-build.log
 RC="$(cat "$STATUS")"
 rm -f "$STATUS"
+
 if [ "$RC" -ne 0 ]; then
     echo "lb build faalde met exit $RC" >&2
     exit "$RC"

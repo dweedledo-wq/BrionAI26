@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#060B16"/>
+  <g stroke="#0A1424" stroke-width="1">
+    <path d="M100 0V600M200 0V600M300 0V600M400 0V600M500 0V600M600 0V600M700 0V600"/>
+    <path d="M0 100H800M0 200H800M0 300H800M0 400H800M0 500H800"/>
+  </g>
+  <!-- BrionAI26-merklogo (brand/file_00000000ace471f4822c47ae84fef756.png, 96px) -->
+  <image x="352" y="120" width="96" height="96" href="data:image/png;base64,@BRIONAI26_LOGO_B64@"/>
+  <line x1="24" y1="300" x2="72" y2="300" stroke="#2683C0" stroke-width="2"/>
+  <line x1="728" y1="300" x2="776" y2="300" stroke="#3270C5" stroke-width="2"/>
+  <rect x="0" y="598" width="800" height="2" fill="#F0C090"/>
+</svg>

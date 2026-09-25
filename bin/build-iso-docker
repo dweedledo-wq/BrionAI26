@@ -14,6 +14,7 @@ mkdir -p build dist
 docker run --privileged --rm \
     --workdir /app \
     --volume "${PWD}/bin:/app/bin" \
+    --volume "${PWD}/config:/app/config" \
     --volume "${PWD}/desktop:/app/desktop" \
     --volume "${PWD}/brand:/app/brand" \
     --volume "${PWD}/build:/app/build" \

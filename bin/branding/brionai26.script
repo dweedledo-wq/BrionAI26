@@ -1,29 +1,37 @@
-# BrionAI26 boot splash: donker paneel, gouden laadbalk onder het logo.
+# BrionAI26 boot splash: staalblauwe wand, gouden merk-logo, laadbalk.
+# Officiele Plymouth-script-API (Sprite.New/Image.New/SetColor bestaan
+# niet en braken de splash op ISO 082014 -- deze versie gebruikt alleen
+# gedocumenteerde functies).
+
+Window.SetBackgroundTopColor(0.024, 0.043, 0.086);
+Window.SetBackgroundBottomColor(0.024, 0.043, 0.086);
+
 screen_width = Window.GetWidth();
 screen_height = Window.GetHeight();
-background = Image.New(screen_width, screen_height);
-background.SetColor(0.039, 0.055, 0.070);
-background_sprite = Sprite.New();
-background_sprite.SetImage(background);
-background_sprite.SetPosition(0, 0, -10000);
+
 logo = Image("logo.png");
-logo_sprite = Sprite.New();
-logo_sprite.SetImage(logo);
-logo_sprite.SetPosition(screen_width / 2 - logo.GetWidth() / 2, screen_height / 2 - logo.GetHeight() / 2);
-bar_width = screen_width * 0.20;
-bar_x = screen_width / 2 - bar_width / 2;
-bar_y = screen_height / 2 + logo.GetHeight() / 2 + 40;
-bar_track = Image.New(bar_width, 3);
-bar_track.SetColor(0.10, 0.13, 0.16);
-bar_track_sprite = Sprite.New();
-bar_track_sprite.SetImage(bar_track);
-bar_track_sprite.SetPosition(bar_x, bar_y);
-bar_fill_sprite = Sprite.New();
-fun refresh_callback(time) {
-    progress = Plymouth.GetBootProgress();
-    fill = Image.New(bar_width * progress, 3);
-    fill.SetColor(0.847, 0.659, 0.471);
-    bar_fill_sprite.SetImage(fill);
-    bar_fill_sprite.SetPosition(bar_x, bar_y);
+logo_scaled = logo.Scale(logo.GetWidth() * 0.35, logo.GetHeight() * 0.35);
+logo_sprite = Sprite(logo_scaled);
+logo_sprite.SetPosition(screen_width / 2 - logo_scaled.GetWidth() / 2,
+                        screen_height / 2 - logo_scaled.GetHeight() / 2 - 60,
+                        100);
+
+bar_w = screen_width * 0.20;
+bar_x = screen_width / 2 - bar_w / 2;
+bar_y = screen_height / 2 + 90;
+
+track_img = Image("bar_track.png");
+track_scaled = track_img.Scale(bar_w, 4);
+track_sprite = Sprite(track_scaled);
+track_sprite.SetPosition(bar_x, bar_y, 100);
+
+fill_img = Image("bar_fill.png");
+fill_sprite = Sprite(fill_img.Scale(1, 4));
+fill_sprite.SetPosition(bar_x, bar_y, 101);
+
+fun boot_progress(duration, progress) {
+    fill_w = Math.Max(bar_w * progress, 1);
+    fill_sprite.SetImage(fill_img.Scale(fill_w, 4));
 }
-Plymouth.SetRefreshFunction(refresh_callback);
+
+Plymouth.SetBootProgressFunction(boot_progress);
