@@ -369,14 +369,35 @@ Icon=install
 Categories=System
 EOF
 
-# 3) Autostart: picom + conky + devilspie2 bij login
+# 3) Autostart: FUI-shell v2 (fui-data daemon + tegelwand-webview) bij login.
+#    Conky + devilspie2 zijn vervangen door de tegelwand (FUI v2-ontwerp,
+#    docs/FUI-SHELL-V2-ONTWERP.md); picom blijft (glas-effect).
 AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-desktop.desktop"
 mkdir -p "$(dirname "$AUTO")"
 cat > "$AUTO" <<'EOF'
 [Desktop Entry]
 Type=Application
 Name=BrionAI26 Mission Control
-Exec=sh -c 'picom --config $HOME/.config/picom/picom.conf & conky -c $HOME/.config/conky/conky.conf & devilspie2 -a &'
+Exec=sh -c 'picom --config $HOME/.config/picom/picom.conf & /usr/bin/fui-data &'
+OnlyShowIn=XFCE;
+EOF
+
+# 3b) FUI-shell v2 (B1): tegelwand-host + data-daemon in de ISO.
+FUISHELL="$CFG/config/includes.chroot/usr/share/brionai26/fui-shell"
+mkdir -p "$FUISHELL"
+cp "$HERE/branding/fui-shell/index.html" "$FUISHELL/index.html"
+cp "$HERE/branding/fui-shell/wand.js" "$FUISHELL/wand.js"
+cp "$HERE/branding/fui-data" "$CFG/config/includes.chroot/usr/bin/fui-data"
+chmod 0755 "$CFG/config/includes.chroot/usr/bin/fui-data"
+cp "$HERE/branding/fui-wand-launcher" "$CFG/config/includes.chroot/usr/bin/brionai26-fui-wand"
+chmod 0755 "$CFG/config/includes.chroot/usr/bin/brionai26-fui-wand"
+FUW_AUTO="$CFG/config/includes.chroot/etc/xdg/autostart/brionai26-fui-wand.desktop"
+mkdir -p "$(dirname "$FUW_AUTO")"
+cat > "$FUW_AUTO" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=BrionAI26 FUI Tegelwand
+Exec=sh -c 'sleep 3 && /usr/bin/brionai26-fui-wand'
 OnlyShowIn=XFCE;
 EOF
 
