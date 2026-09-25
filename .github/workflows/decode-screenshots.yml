@@ -26,8 +26,12 @@ jobs:
             cat "$base".p[0-9][0-9][0-9] | base64 -d > "${base%.b64}"
           done
           if ls *.jpg.b64.p000 >/dev/null 2>&1; then
-            sha256sum -c SHA256SUMS || ok=0
-            [ "$ok" -eq 1 ]
+            if sha256sum -c SHA256SUMS; then
+              echo "CHECKSUM-OK: parts compleet en verifieerbaar"
+            else
+              echo "checksum-faal: waarschijnlijk incomplete part-set (tussenpush); geen cleanup"
+              exit 1
+            fi
           else
             echo "geen b64-parts aanwezig; alleen checksum-controle"
             sha256sum -c SHA256SUMS
