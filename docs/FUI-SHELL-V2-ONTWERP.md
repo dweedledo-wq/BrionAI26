@@ -132,12 +132,12 @@ PINNED
 
 | Tegel | Bron | Poll |
 |---|---|---|
-| CPU/RAM/DISK | `fui-data` daemon: /proc/stat, /proc/meminfo, df | 1 Hz |
+| CPU/RAM/DISK | `fui-data` daemon: /proc/stat, /meminfo, df | 1 Hz |
 | NET | /proc/net/dev, up/down-snelheid | 1 Hz |
 | Tailscale | `tailscale status --json` | 5 s |
 | PM2 | `pm2 jlist` (via bestand uit cron) | 5 s |
 | n8n | health-endpoint hub | 5 s |
-| SysDash | hub-URL via Tailscale (of nette offline-tegel) | 10 s |
+| SysDash | hub via Tailscale (`100.96.40.22:9000` — BEVESTIGD) | 10 s |
 | Logs | journalctl -f (gebufferde tail, laatste 50 regels) | push |
 
 `fui-data` = klein Python-daemon die alles bundelt en op
@@ -184,8 +184,10 @@ alles lokaal — data is ECHT uit het eigen systeem).
 ## 10. Wat ik nodig heb van Brionize
 
 1. **GO op dit ontwerp** (of aanpassingen — liever nu dan na B3).
-2. Bevestiging: hub-URL voor SysDash = `100.96.40.22:9000` (staat in
-   PROGRESS.md — klopt dat nog?).
+2. ~~Bevestiging hub-URL~~ — **BEVESTIGD door Brionize (2026-09-25):**
+   SysDash hub op de Asus = `100.96.40.22:9000` (Tailscale lokaal
+   adres, alleen bereikbaar binnen de tailnet — fallback-tegel uit A5
+   dekt bereikbaarheid buiten de tailnet).
 3. Bij A10: de Asus beschikbaar voor de live-test.
 
 ---
