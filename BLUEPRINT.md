@@ -149,7 +149,7 @@ tegels tegelijk in beeld en tegelijk bedienbaar. Concreet:
   PM2 (npm) + systemd watchdogs (zelfherstellend).
 
 ### First-boot wizard (fase 5)
-Draait éénmalig ná installatie op de doel-pc: lokale gebruiker aanmaken,
+Draait eenmalig ná installatie op de doel-pc: lokale gebruiker aanmaken,
 `tailscale up`, `gh auth login`, optionele AI-keys (Anthropic/OpenAI/
 Gemini/Mistral) naar `~/.env`. Schakelt zichzelf na afloop uit.
 
@@ -162,8 +162,8 @@ Gemini/Mistral) naar `~/.env`. Schakelt zichzelf na afloop uit.
 
 ## CI-strategie
 - Vrijwel alles via `apt`/binaire installs, dus een volledige ISO-build
-  hoort **ruim binnen tientallen minuten** op een standaard GitHub
-  Actions-runner te passen. **Bevestigd:** volledige build in ~5-6 min.
+  hoort **ruim binnen tientallen minuten** te passen op een standaard GitHub
+  Actions-runner. **Bevestigd:** volledige build in ~5-6 min.
 - Repo is publiek → gratis Actions-minuten tijdens de bouwfase.
 - Mocht er tóch een aangepast pakket gecompileerd moeten worden
   (zeldzaam): officiële bron eerst, checksum-verplichte fallback-keten,
@@ -195,6 +195,61 @@ Alle benodigde API's staan in `.env.example` (placeholders, geen waarden).
   via interactieve CLI-login (tailscale up, gh auth login, supabase login,
   cloudflared tunnel login): geen geheimen op schijf, geen limieten.
 
+## FUI Desktop v2 — herontwerp van de desktop-laag (productbesluit 2026-09-25, Brionize)
+
+### Waarom een v2
+Fases 1–5 zijn bewezen en blijven ongewijzigd: de live-build-pipeline,
+CI met ISO-Releases, Calamares-installatie, GRUB-thema + Plymouth-splash
+met merklogo. De desktop-laag erbovenop is echter patch-op-patch
+ontstaan (Conky-HUD, devilspie2-tiling, losse heredoc-XML in
+apply-desktop) omdat het einddoel toen nog niet vaststond. Nu het
+FUI-eindbeeld vastligt, wordt die laag in één keer schoon ontworpen en
+gebouwd — niet verder gepleisterd. (Er wordt bewust NIET vanaf scratch
+begonnen: de bewezen onderbouw blijft.)
+
+### Het vastgestelde FUI-eindbeeld (uit de chat met Brionize)
+- **Live glas-tegels** in plaats van statische vensters: tegels tonen
+  continue live data (échte data, geen nep-FUI) en zijn altijd zichtbaar.
+- **Hover/ klik-gedrag (kern van het productgevoel):** tegel klein in de
+  wand → hover of klik = tegel komt naar voren en wordt groot → er is
+  direct mee te werken; verlaten/terug = klapt terug naar zijn plek.
+  Zoals de FUI-referentiefoto die Brionize deelde: glass panels die op
+  hover naar voren komen.
+- **AI-paneel (AI Matrix):** één klein zichtbaar paneel waarin Claude,
+  ChatGPT, Mistral en Gemini staan geopend; zelfde hover/klik-gedrag.
+- **PWA-tegels:** één tegel waarin eigen PWA's geopend kunnen worden,
+  draaien en klein zichtbaar zijn — met hetzelfde hover/klik-gedrag.
+- **Webbrowser-tegel:** pagina-inhoud zichtbaar in de kleine tegel,
+  zelfde hover/klik-gedrag.
+- **Cilinder in het midden: nee** — Brionize wil liever één werkblad;
+  voorstel is het toepassen op de drie werkbladen met gelijke look &
+  feel per blad (Command Center, AI Matrix, Dev Studio).
+
+### Wat blijft / wat vervalt / wat nieuw komt
+- **Blijft:** pipeline, CI, Calamares, boot-branding (GRUB + splash +
+  lightdm), het staalblauwe missie-control-palet (BG_DEEP `#060B16`,
+  ACCENT_STEEL `#2683C0`, ACCENT_GOLD `#F0C090`, TEXT_MAIN `#CDD8E1` —
+  zie `brand/theme/mission-control.conf`), 3 werkbladen + Super-hotkeys,
+  Calamares-installatie, first-boot-wizard.
+- **Vervalt op termijn:** Conky-HUD als losse HUD-laag, devilspie2-hacks,
+  de patch-geschiedenis in de desktop-configuratie. SysDash (PWA,
+  `brionize-nl/sysdash-brionize`, hub op de Asus via Tailscale
+  100.96.40.22:9000) wordt de Command Center-tegel i.p.v. Conky.
+- **Nieuw:** web-tech FUI-tegels (HTML/JS/CSS in WebView-vensters met
+  semi-transparante achtergrond via picom): live tegels met echte
+  systeemdata (CPU/RAM/disk/net/Tailscale/PM2/n8n), hover/klik-
+  uitbreiding met focus, AI-PWA-tegels, PWA-starttegel, browser-tegel.
+  De wallpaper/greeter/autologin-fixes worden onderdeel van het v2-ontwerp
+  in plaats van losse pleisters (monitor-level xfdesktop-properties +
+  desktop-base-symlinks zijn al de bewezen route, zie PROGRESS.md).
+
+### Bouwvolgorde v2
+1. **Ontwerp-document eerst** (schermindeling per werkblad, tegeltypen,
+   hover/klik-state-machine, gegevensbronnen per tegel, kleuren/font,
+   wat blijft/wat vervalt) → ter goedkeuring aan Brionize.
+2. Pas na GO: implementeren in `bin/apply-desktop` (of een opvolger
+   daarvan), elke stap eindigend met een bewezen CI-build + VM-bewijs.
+
 ## Wat nog open staat
 - Pakketlijsten/hooks voor desktop-laag (fase 2) en devstack (fase 3) nog
   uitwerken.
@@ -204,6 +259,14 @@ Alle benodigde API's staan in `.env.example` (placeholders, geen waarden).
 - Logo-upload in `brand/logo/` (Brionize heeft upload gepland).
 
 ## Beslislog
+- **2026-09-25 — FUI Desktop v2 vastgesteld (productbesluit, Brionize).**
+  De desktop-laag wordt herontworpen als "FUI Desktop v2" in één keer
+  schoon (live glas-tegels met echte data, hover/klik naar voren komen,
+  AI-paneel, PWA-tegels, SysDash als Command Center-tegel i.p.v.
+  Conky-HUD), zonder opnieuw vanaf scratch te beginnen: de bewezen
+  fases 1–5 (pipeline/CI/Calamares/boot-branding) blijven staan. Eerst
+  het ontwerp ter goedkeuring, dan bouwen. Zie het gelijknamige
+  hoofdstuk.
 - **2026-09-23 — Human-in-the-loop bij CLI-toegang vastgesteld (productbesluit, Brionize).**
   Grondregel: bij AI met CLI/terminal-toegang bínnen BrionAI26 blijft de
   mens altijd de CEO/dirigent — niets blijvends, externs of publicerends
