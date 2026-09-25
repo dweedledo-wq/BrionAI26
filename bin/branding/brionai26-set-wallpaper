@@ -1,0 +1,43 @@
+#!/bin/sh
+# BrionAI26 wallpaper-fix (XFCE-autostart): xfdesktop 4.20 (trixie) leest
+# de backdrop uitsluitend onder de echte xrandr-output-naam, bv.
+# /backdrop/screen0/monitorVirtual-1/workspace0/last-image. Een statische
+# skel-XML met monitor0/monitor1 wordt genegeerd en xfdesktop valt dan
+# terug op de hardcoded Debian-default (xfce-teal.svg).
+# VM-bewezen route (QEMU, ISO 140220): deze xfconf-set pakt direct;
+# een extra restart van lightdm is niet nodig.
+# Draait eenmalig per gebruiker (marker-file) en verlaat stil bij
+# geen X / geen xfconf-query.
+set -eu
+
+MARKER="${XDG_CACHE_HOME:-$HOME/.cache}/brionai26/wallpaper-set"
+if [ -f "$MARKER" ]; then
+    exit 0
+fi
+
+command -v xfconf-query >/dev/null 2>&1 || exit 0
+[ -n "${DISPLAY:-}" ] || exit 0
+
+WALL=/usr/share/backgrounds/brionai26/wallpaper.png
+[ -f "$WALL" ] || exit 0
+
+# Werkbladen 1 t/m 3 (workspace0-2), alle aangesloten outputs.
+for OUT in $(xrandr --query 2>/dev/null | awk '/ connected/{print $1}'); do
+    for WS in 0 1 2; do
+        xfconf-query -c xfce4-desktop \
+            -p "/backdrop/screen0/monitor${OUT}/workspace${WS}/last-image" \
+            -n -t string -s "$WALL" 2>/dev/null || true
+        xfconf-query -c xfce4-desktop \
+            -p "/backdrop/screen0/monitor${OUT}/workspace${WS}/image-style" \
+            -n -t int -s 4 2>/dev/null || true
+    done
+    xfconf-query -c xfce4-desktop \
+        -p "/backdrop/screen0/monitor${OUT}/image-path" \
+        -n -t string -s "$WALL" 2>/dev/null || true
+    xfconf-query -c xfce4-desktop \
+        -p "/backdrop/screen0/monitor${OUT}/image-show" \
+        -n -t bool -s true 2>/dev/null || true
+done
+
+mkdir -p "$(dirname "$MARKER")"
+date -u +%Y-%m-%dT%H:%M:%SZ > "$MARKER"
