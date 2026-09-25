@@ -9,8 +9,8 @@
    BLUEPRINT.md-hoofdstuk "FUI Desktop v2")**: de complete desktop-laag
    in één keer schoon ontwerpen en bouwen i.p.v. verder patchen. Start
    met het uitgewerkte ontwerp ter goedkeuring aan Brionize.
-2. Wallpaper/lightdm-fixes afronden (zie sectie hieronder): fix 3+4 in
-   `bin/apply-desktop` committen en pushen, CI-bewijs, VM-einde-bewijs.
+2. VM-einde-bewijs live-wallpaper (Release `iso-20260925-140220`, zie
+   sectie hieronder) + autologin-risico verifiëren.
 3. Live-test nieuwste ISO op de doel-pc (Asus): SysDash-tegel
    (Super+S → hub), tegelwand + hover, splash, first-boot wizard.
 4. Calamares-installatie op de Asus → daarna v1.0-tag zetten.
@@ -61,33 +61,28 @@ BrionAI26-look. In de QEMU-VM gereproduceerd.
 lightdm-gtk-greeter draait op de staalblauwe wallpaper (pixel-bewijs
 (6,11,22) rond login-dialoog in de VM).
 
-**Fix 3 (autologin, lokaal voorbereid — nog niet gepusht):** door
-`user-session=xfce` wacht lightdm op handmatige login; greeter stond op
-verkeerde last-user. Oplossing: `autologin-user=user` +
-`autologin-user-timeout=3` in lightdm.conf. **Let op risico (punt 7
-hieronder):** deze regels staan in includes.chroot en belanden zo óók op
-de geïnstalleerde pc — overweeg een live-only-variant (live-config-hook
-of check op `boot=live`), óf verifieer dat Calamares'
-displaymanager-module ze wegwerkt bij installatie
+**Fix 3 (autologin):** door `user-session=xfce` wacht lightdm op
+handmatige login; greeter stond op verkeerde last-user. Oplossing:
+`autologin-user=user` + `autologin-user-timeout=3` in lightdm.conf.
+**Let op risico:** deze regels staan in includes.chroot en belanden zo
+óók op de geïnstalleerde pc — overweeg een live-only-variant
+(live-config-hook of check op `boot=live`), óf verifieer dat
+Calamares' displaymanager-module ze wegwerkt bij installatie
 (`/etc/calamares/modules/displaymanager.conf` bestaat al).
 
+**Fix 3+4 doorgevoerd en bewezen:** beide fixes zitten in
+`bin/apply-desktop` (commit `d94773a`, byte-exact geverifieerd na een
+afgekapte eerste push die is hersteld). **CI-run 36143606642 geslaagd**
+— Release `iso-20260925-140220`
+(SHA256 ea73738d69713f797270026eff4a6e18078440a0bfb5e3f6bbbc6ad87a2a9268).
+Nog open: VM-einde-bewijs dat de live-desktop na frisse boot de
+wallpaper toont (pixel-check (6,11,22)) + autologin-risico voor de
+geïnstalleerde pc verifiëren.
+
 **Open punten (voor de volgende sessie):**
-1. Fix 3+4 in `bin/apply-desktop` afronden, committen en pushen (push
-   gaat via de GitHub App API-tool `github_app_create_or_update_file`,
-   blob-sha van bin/apply-desktop op de branch is nodig).
-2. CI-run naar groen volgen → nieuwe Release + SHA256.
-3. VM-einde-bewijs met de nieuwe ISO: live-auto-login → bureaublad met
+1. VM-einde-bewijs met de nieuwe ISO: live-auto-login → bureaublad met
    staalblauwe wallpaper (pixel-check (6,11,22)) + Conky-HUD + paneel.
-4. VM-bevinding: xfconf-wijzigingen vanaf een serial-shell pakken niet
-   in de GUI-sessie (aparte D-Bus session bus) — gebruik altijd
-   `DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus` +
-   `DISPLAY=:0` + `XAUTHORITY=/home/user/.Xauthority` als je de GUI
-   remote wilt sturen. Zelfs daarmee weigerde xfdesktop in de test-VM
-   te herladen; xfdesktop hield de teal afbeelding vast tot een volledige
-   lightdm-herstart (desktop-base-symlinks stonden al goed). Er is nog
-   géén VM-bewijs dat de desktop na een frisse live-boot de wallpaper
-   toont — dat is het einde-bewijs dat nog moet worden geleverd.
-5. Autologin-risico (zie fix 3) verifiëren vóór de Asus-live-test.
+2. Autologin-risico verifiëren vóór de Asus-live-test.
 
 ## 2026-09-24 — CALAMARES-INSTALLATIE END-TO-END VM-BEWEZEN ✅
 
@@ -102,7 +97,7 @@ displaymanager-module ze wegwerkt bij installatie
      ("Erase disk", vda 20 GiB gedetecteerd) → Users (brionize) →
      Summary → Install.
   4. Installatie voltooid: session.log `completion: succeeded`,
-     schijfpartitie vda1 (ext4, 20 GiB) aangemaakt.
+     schrijfpartitie vda1 (ext4, 20 GiB) aangemaakt.
   5. **Reboot van de geïnstalleerde schijf** (zonder ISO): branded
      lightdm-login (staalblauw #060B16, hostname brionai26).
   6. **Inloggen met de tijdens de installatie aangemaakte credentials
