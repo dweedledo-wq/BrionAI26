@@ -31,7 +31,7 @@ jobs:
         run: |
           git config user.name "brionize"
           git config user.email "dweedledo@gmail.com"
-          git rm -r -q --ignore-unmatch 'docs/screenshots/*.b64' 'docs/screenshots/*.part*' 'docs/screenshots/screenshot-05-rode-test-wallpaper-small.png' || true
+          git rm -q --ignore-unmatch docs/screenshots/*.jpg.b64.p[0-9][0-9][0-9] docs/screenshots/*.b64 docs/screenshots/*.part* docs/screenshots/screenshot-05-rode-test-wallpaper-small.png || true
           git add docs/screenshots/*.jpg
           git diff --cached --quiet && echo "niets te committen" && exit 0
           git commit -m "docs: screenshots gedecodeerd van b64-parts (CI-geverifieerd)"
