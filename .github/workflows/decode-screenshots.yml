@@ -18,14 +18,20 @@ jobs:
       - name: Decode b64 screenshot-parts to JPG and verify checksums
         run: |
           set -eu
+          shopt -s nullglob
           cd docs/screenshots
           ok=1
           for b in *.jpg.b64.p000; do
             base="${b%.p000}"
             cat "$base".p[0-9][0-9][0-9] | base64 -d > "${base%.b64}"
           done
-          sha256sum -c SHA256SUMS || ok=0
-          [ "$ok" -eq 1 ]
+          if ls *.jpg.b64.p000 >/dev/null 2>&1; then
+            sha256sum -c SHA256SUMS || ok=0
+            [ "$ok" -eq 1 ]
+          else
+            echo "geen b64-parts aanwezig; alleen checksum-controle"
+            sha256sum -c SHA256SUMS
+          fi
 
       - name: Commit decoded screenshots and clean up
         run: |
