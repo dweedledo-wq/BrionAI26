@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>BRIONAI26 — COMMAND CENTER</title>
+<style>
+:root {
+  --bg-deep:   #060B16;
+  --bg-panel:  #0A1424;
+  --glass-a:   0.72;
+  --steel:     #2683C0;
+  --steel-br:  #3270C5;
+  --gold:      #F0C090;
+  --amber:     #FFB300;
+  --red:       #FF3B4E;
+  --txt-main:  #CDD8E1;
+  --txt-dim:   #7A93B8;
+  --txt-faint: #3E5A7E;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: "JetBrains Mono", "DejaVu Sans Mono", monospace;
+  font-weight: bold;
+  color: var(--txt-main);
+}
+#wand {
+  width: 100vw; height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+  padding: 10px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(38,131,192,0.05), transparent 60%),
+    transparent;
+}
+.tegel {
+  position: relative;
+  background: rgba(10,20,36, var(--glass-a));
+  border: 1px solid rgba(38,131,192,0.6);
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(38,131,192,0.35),
+              inset 0 0 24px rgba(38,131,192,0.07);
+  padding: 10px 12px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: transform 220ms cubic-bezier(.2,.8,.3,1),
+              box-shadow 220ms, z-index 0ms;
+  z-index: 1;
+}
+.tegel:hover {
+  transform: scale(1.06);
+  z-index: 10;
+  box-shadow: 0 0 18px rgba(38,131,192,0.55),
+              inset 0 0 24px rgba(38,131,192,0.12);
+  border-color: var(--steel-br);
+}
+.tegel.pinned {
+  transform: scale(1.25);
+  z-index: 20;
+  box-shadow: 0 0 26px rgba(38,131,192,0.7),
+              inset 0 0 24px rgba(38,131,192,0.15);
+  border-color: var(--gold);
+}
+.t-kop { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.t-naam {
+  font-size: 11px; letter-spacing: 2px;
+  color: var(--txt-dim);
+}
+.t-led {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--steel);
+  box-shadow: 0 0 6px var(--steel);
+}
+.t-led.warn  { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+.t-led.crit  { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+.t-inhoud { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.groot-waarde { font-size: 26px; color: var(--txt-main); }
+.groot-waarde .unit { font-size: 13px; color: var(--txt-dim); }
+.sub { font-size: 10px; color: var(--txt-dim); margin-top: 4px; }
+.balk {
+  height: 6px; border-radius: 3px; margin-top: 8px;
+  background: rgba(38,131,192,0.12);
+  overflow: hidden;
+}
+.balk-vulling { height: 100%; background: linear-gradient(90deg, var(--steel), var(--steel-br)); box-shadow: 0 0 6px rgba(38,131,192,0.6); transition: width 600ms; }
+.balk-vulling.warn { background: linear-gradient(90deg, var(--amber), #ffd166); }
+.balk-vulling.crit { background: linear-gradient(90deg, var(--red), #ff7b8a); }
+.lijst { font-size: 10px; color: var(--txt-dim); line-height: 1.7; }
+.lijst .ok { color: var(--steel-br); }
+.merk {
+  position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+  font-size: 13px; letter-spacing: 6px;
+  color: var(--gold);
+  text-shadow: 0 0 10px rgba(240,192,144,0.4);
+  z-index: 30; pointer-events: none;
+}
+.scanlines {
+  position: fixed; inset: 0; pointer-events: none; z-index: 40;
+  background: repeating-linear-gradient(0deg, rgba(6,11,22,0.03) 0 1px, transparent 1px 3px);
+}
+.klok-tijd { font-size: 30px; }
+.klok-datum { font-size: 11px; color: var(--txt-dim); margin-top: 2px; }
+.spark { width: 100%; height: 34px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="merk">B R I O N A I 2 6</div>
+<div id="wand">
+
+  <div class="tegel" data-tegel="cpu">
+    <div class="t-kop"><span class="t-led" id="led-cpu"></span><span class="t-naam">CPU</span></div>
+    <div class="t-inhoud">
+      <div class="groot-waarde"><span id="cpu-pct">--</span><span class="unit">%</span></div>
+      <div class="balk"><div class="balk-vulling" id="cpu-balk" style="width:0%"></div></div>
+      <div class="sub" id="cpu-sub">kernen: --</div>
+    </div>
+  </div>
+
+  <div class="tegel" data-tegel="ram">
+    <div class="t-kop"><span class="t-led" id="led-ram"></span><span class="t-naam">RAM</span></div>
+    <div class="t-inhoud">
+      <div class="groot-waarde"><span id="ram-pct">--</span><span class="unit">%</span></div>
+      <div class="balk"><div class="balk-vulling" id="ram-balk" style="width:0%"></div></div>
+      <div class="sub" id="ram-sub">-- / -- GB</div>
+    </div>
+  </div>
+
+  <div class="tegel" data-tegel="disk">
+    <div class="t-kop"><span class="t-led" id="led-disk"></span><span class="t-naam">DISK</span></div>
+    <div class="t-inhoud">
+      <div class="groot-waarde"><span id="disk-pct">--</span><span class="unit">%</span></div>
+      <div class="balk"><div class="balk-vulling" id="disk-balk" style="width:0%"></div></div>
+      <div class="sub" id="disk-sub">-- / -- GB</div>
+    </div>
+  </div>
+
+  <div class="tegel" data-tegel="net">
+    <div class="t-kop"><span class="t-led" id="led-net"></span><span class="t-naam">NET</span></div>
+    <div class="t-inhoud">
+      <div class="groot-waarde"><span id="net-down">--</span><span class="unit">↓</span></div>
+      <div class="sub"><span id="net-up">--</span> ↑</div>
+      <div class="sub" id="net-if">interfaces: --</div>
+    </div>
+  </div>
+
+  <div class="tegel" data-tegel="sysdash">
+    <div class="t-kop"><span class="t-led" id="led-sysdash"></span><span class="t-naam">SYSDASH</span></div>
+    <div class="t-inhoud">
+      <div class="groot-waarde" style="font-size:15px" id="sysdash-status">HUB</div>
+      <div class="sub">100.96.40.22:9000</div>
+      <div class="sub" id="sysdash-sub">status: --</div>
+    </div>
+  </div>
+
+  <div class="tegel" data-tegel="pm2">
+    <div class="t-kop"><span class="t-led" id="led-pm2"></span><span class="t-naam">PM2</span></div>
+    <div class="t-inhoud">
+      <div class="groot-waarde"><span id="pm2-online">--</span><span class="unit"> online</span></div>
+      <div class="lijst" id="pm2-lijst">--</div>
+    </div>
+  </div>
+
+  <div class="tegel" data-tegel="n8n">
+    <div class="t-kop"><span class="t-led" id="led-n8n"></span><span class="t-naam">N8N</span></div>
+    <div class="t-inhoud">
+      <div class="groot-waarde" style="font-size:15px" id="n8n-status">--</div>
+      <div class="sub" id="n8n-sub">flows: --</div>
+    </div>
+  </div>
+
+  <div class="tegel" data-tegel="tailscale">
+    <div class="t-kop"><span class="t-led" id="led-ts"></span><span class="t-naam">TAILSCALE</span></div>
+    <div class="t-inhoud">
+      <div class="groot-waarde" style="font-size:15px" id="ts-status">--</div>
+      <div class="lijst" id="ts-lijst">--</div>
+    </div>
+  </div>
+
+  <div class="tegel" data-tegel="logs">
+    <div class="t-kop"><span class="t-led" id="led-logs"></span><span class="t-naam">LOGS</span></div>
+    <div class="t-inhoud"><div class="lijst" id="logs-tail">tail -f journal…</div></div>
+  </div>
+
+  <div class="tegel" data-tegel="services">
+    <div class="t-kop"><span class="t-led" id="led-svc"></span><span class="t-naam">SERVICES</span></div>
+    <div class="t-inhoud"><div class="lijst" id="svc-lijst">--</div></div>
+  </div>
+
+  <div class="tegel" data-tegel="tempo">
+    <div class="t-kop"><span class="t-led" id="led-tempo"></span><span class="t-naam">TEMPO</span></div>
+    <div class="t-inhoud">
+      <div class="groot-waarde"><span id="uptime">--</span></div>
+      <div class="sub" id="load-sub">load: --</div>
+    </div>
+  </div>
+
+  <div class="tegel" data-tegel="klok">
+    <div class="t-kop"><span class="t-led"></span><span class="t-naam">KLOK</span></div>
+    <div class="t-inhoud" style="align-items:flex-end; text-align:right">
+      <div class="klok-tijd" id="klok-tijd">--:--:--</div>
+      <div class="klok-datum" id="klok-datum">--</div>
+    </div>
+  </div>
+
+</div>
+<div class="scanlines"></div>
+<script src="wand.js"></script>
+</body>
+</html>
