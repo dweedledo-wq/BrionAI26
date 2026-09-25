@@ -1,0 +1,22 @@
+#!/bin/sh
+# BrionAI26 — FUI-shell v2 tegelwand-host (B1).
+# Opent de webview-tegelwand fullscreen op het juiste werkblad.
+# De tegelwand zelf: /usr/share/brionai26/fui-shell/index.html
+set -eu
+WALL=/usr/share/brionai26/fui-shell/index.html
+
+# B1: tegelwand hoort op werkblad 1 (Command Center).
+wmctrl -s 0 2>/dev/null || true
+sleep 0.3
+
+# Chromium als kiosk-host: frameless, semi-transparant op desktop-niveau
+# via picom (opacity-rule op de vensternaam, zie picom.conf).
+# --window-positioniera rond eventuele wmctrl-races; --kiosk = fullscreen.
+exec chromium --app="file://${WALL}" \
+    --window-position=0,0 \
+    --window-size="${FUI_WIDTH:-1280},${FUI_HEIGHT:-720}" \
+    --class=brionai26-fuiwand \
+    --user-data-dir=/tmp/fui-wand-profile \
+    --no-first-run --no-default-browser-check \
+    --disable-features=TranslateUI \
+    --force-device-scale-factor=1
