@@ -1,0 +1,199 @@
+#!/usr/bin/env python3
+"""BrionAI26 — fui-data daemon (FUI-shell v2, B2).
+
+Bundelt echte systeemdata naar http://localhost:7633/json (1 Hz).
+Alleen lokaal: bindt op 127.0.0.1, geen externe toegang.
+Alle data komt uit het eigen systeem (/proc, df, systemctl, tailscale,
+pm2) — geen nep-FUI: ontbrekende bronnen geven null/leeg, de tegelwand
+toont dan '--' of een nette fallback.
+"""
+import json
+import subprocess
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+VORIGE_NET = None
+VORIGE_CPU = None
+
+
+def cpu():
+    global VORIGE_CPU
+    try:
+        with open("/proc/stat") as f:
+            regels = f.readlines()
+        voor = {}
+        for r in regels:
+            if r.startswith("cpu") and r.split()[0] == "cpu":
+                voor = dict(zip(
+                    ["user", "nice", "system", "idle", "iowait", "irq",
+                     "softirq", "steal"], r.split()[1:9]))
+                break
+        if VORIGE_CPU:
+            tot_v = sum(int(v) for v in voor.values())
+            tot_p = sum(int(v) for v in VORIGE_CPU.values())
+            idle_d = int(voor["idle"]) - int(VORIGE_CPU["idle"])
+            pct = 100.0 * (1 - idle_d / (tot_v - tot_p + 1))
+        else:
+            pct = 0.0
+        VORIGE_CPU = {k: int(v) for k, v in voor.items()}
+        import os
+        return {"pct": round(pct, 1), "kernen": os.cpu_count() or 0}
+    except Exception:
+        return None
+
+
+def ram():
+    try:
+        info = {}
+        with open("/proc/meminfo") as f:
+            for r in f:
+                k, v = r.split(":")
+                info[k] = int(v.strip().split()[0])
+        tot = info["MemTotal"] / 1048576
+        besch = info["MemAvailable"] / 1048576
+        gebruikt = tot - besch
+        return {"pct": round(100 * gebruikt / tot, 1),
+                "gebruikt": round(gebruikt, 1), "totaal": round(tot, 1)}
+    except Exception:
+        return None
+
+
+def disk():
+    try:
+        out = subprocess.run(
+            ["df", "-B1", "/"], capture_output=True, text=True, timeout=3)
+        r = out.stdout.splitlines()[1].split()
+        tot = int(r[1]) / 1073741824
+        gebruik = int(r[2]) / 1073741824
+        return {"pct": round(100 * gebruik / tot, 1),
+                "gebruikt": round(gebruik, 1), "totaal": round(tot, 1)}
+    except Exception:
+        return None
+
+
+def net():
+    global VORIGE_NET
+    try:
+        interfaces, huidig = 0, {}
+        with open("/proc/net/dev") as f:
+            for r in f.readlines()[2:]:
+                naam = r.split(":")[0].strip()
+                if naam == "lo":
+                    continue
+                interfaces += 1
+                cijfers = r.split(":")[1].split()
+                huidig[naam] = (int(cijfers[0]), int(cijfers[8]))
+        down = up = 0
+        if VORIGE_NET:
+            for naam, (d, u) in huidig.items():
+                if naam in VORIGE_NET:
+                    down += d - VORIGE_NET[naam][0]
+                    up += u - VORIGE_NET[naam][1]
+        VORIGE_NET = huidig
+        return {"down": max(0, down), "up": max(0, up),
+                "interfaces": interfaces}
+    except Exception:
+        return None
+
+
+def tailscale():
+    try:
+        out = subprocess.run(
+            ["tailscale", "status", "--json"],
+            capture_output=True, text=True, timeout=3)
+        d = json.loads(out.stdout)
+        state = d.get("BackendState", "down")
+        peers = []
+        for p in d.get("Peer", {}).values():
+            n = p.get("HostName") or p.get("DNSName", "")
+            if n:
+                peers.append(n.split(".")[0])
+        return {"state": state, "peers": peers}
+    except Exception:
+        return {"state": "not-installed", "peers": []}
+
+
+def pm2():
+    try:
+        out = subprocess.run(
+            ["sh", "-c", "cat /tmp/fui-pm2.json 2>/dev/null || pm2 jlist"],
+            capture_output=True, text=True, timeout=3)
+        proc = json.loads(out.stdout or "[]")
+        namen = [p.get("name", "?") for p in proc]
+        online = sum(1 for p in proc
+                     if p.get("pm2_env", {}).get("status") == "online")
+        return {"online": online, "processen": namen}
+    except Exception:
+        return {"online": 0, "processen": []}
+
+
+def n8n():
+    try:
+        out = subprocess.run(
+            ["sh", "-c", "curl -s -m 2 http://localhost:5678/healthz || true"],
+            capture_output=True, text=True, timeout=3)
+        ok = "ok" in out.stdout
+        return {"status": "up" if ok else "down", "flows": "--"}
+    except Exception:
+        return {"status": "down", "flows": "--"}
+
+
+def sysdash():
+    try:
+        out = subprocess.run(
+            ["sh", "-c", "curl -s -m 2 -o /dev/null -w '%{http_code}' "
+             "http://100.96.40.22:9000 || true"],
+            capture_output=True, text=True, timeout=3)
+        return {"bereikbaar": out.stdout.strip() == "200"}
+    except Exception:
+        return {"bereikbaar": False}
+
+
+def services():
+    diensten = ["lightdm", "NetworkManager", "tailscaled"]
+    result = []
+    for d in diensten:
+        try:
+            out = subprocess.run(
+                ["systemctl", "is-active", d],
+                capture_output=True, text=True, timeout=3)
+            result.append({"naam": d, "ok": out.stdout.strip() == "active"})
+        except Exception:
+            result.append({"naam": d, "ok": False})
+    return result
+
+
+def uptime():
+    try:
+        with open("/proc/uptime") as f:
+            sec = float(f.read().split()[0])
+        uren, rest = sec // 3600, sec % 3600
+        return f"{int(uren)}u{int(rest // 60):02d}m", round(sec / 60 / max(1, (sec or 1)), 2)
+    except Exception:
+        return "--", "--"
+
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        up, load = uptime()
+        data = {
+            "cpu": cpu(), "ram": ram(), "disk": disk(), "net": net(),
+            "tailscale": tailscale(), "pm2": pm2(), "n8n": n8n(),
+            "sysdash": sysdash(), "services": services(),
+            "uptime": up, "load": load,
+            "logs": [],
+        }
+        body = json.dumps(data).encode()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, *a):
+        pass
+
+
+if __name__ == "__main__":
+    server = ThreadingHTTPServer(("127.0.0.1", 7633), Handler)
+    server.serve_forever()
