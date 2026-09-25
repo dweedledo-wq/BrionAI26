@@ -387,6 +387,14 @@ FUISHELL="$CFG/config/includes.chroot/usr/share/brionai26/fui-shell"
 mkdir -p "$FUISHELL"
 cp "$HERE/branding/fui-shell/index.html" "$FUISHELL/index.html"
 cp "$HERE/branding/fui-shell/wand.js" "$FUISHELL/wand.js"
+mkdir -p "$FUISHELL/assets"
+if [ -f "$HERE/branding/fui-shell/assets/referentie.jpg" ]; then
+  cp "$HERE/branding/fui-shell/assets/referentie.jpg" "$FUISHELL/assets/referentie.jpg"
+elif ls "$HERE/branding/fui-shell/assets/"referentie.jpg.b64.p[0-9]* >/dev/null 2>&1; then
+  cat "$HERE/branding/fui-shell/assets/"referentie.jpg.b64.p[0-9]* | base64 -d > "$FUISHELL/assets/referentie.jpg"
+elif [ -f "$HERE/branding/fui-shell/assets/referentie.jpg.b64" ]; then
+  base64 -d "$HERE/branding/fui-shell/assets/referentie.jpg.b64" > "$FUISHELL/assets/referentie.jpg"
+fi
 cp "$HERE/branding/fui-data" "$CFG/config/includes.chroot/usr/bin/fui-data"
 chmod 0755 "$CFG/config/includes.chroot/usr/bin/fui-data"
 cp "$HERE/branding/fui-wand-launcher" "$CFG/config/includes.chroot/usr/bin/brionai26-fui-wand"
