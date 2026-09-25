@@ -15,33 +15,26 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Decode b64 screenshot-parts to PNG and verify checksums
+      - name: Decode b64 screenshot-parts to JPG and verify checksums
         run: |
           set -eu
           cd docs/screenshots
           ok=1
-          while read -r sum name; do
-            if ! ls "$name".b64.part* >/dev/null 2>&1; then
-              echo "MISSING parts voor $name"
-              ok=0
-              continue
-            fi
+          for b in *.jpg.b64; do
+            name="${b%.b64}"
             cat "$name".b64.part* | base64 -d > "$name"
-            if echo "$sum  $name" | sha256sum -c -; then
-              echo "OK $name"
-            else
-              echo "CHECKSUM FAIL $name"
-              ok=0
-            fi
-          done < SHA256SUMS
+            sum=$(sha256sum "$name" | cut -d' ' -f1)
+            echo "$name sha256=$sum"
+          done
+          sha256sum -c SHA256SUMS || ok=0
           [ "$ok" -eq 1 ]
 
-      - name: Commit decoded PNGs and clean up
+      - name: Commit decoded screenshots and clean up
         run: |
           git config user.name "brionize"
           git config user.email "dweedledo@gmail.com"
-          git rm --ignore-unmatch 'docs/screenshots/*.b64' 'docs/screenshots/screenshot-05-rode-test-wallpaper-small.png' || true
-          git add docs/screenshots/*.png
+          git rm -r --ignore-unmatch 'docs/screenshots/*.b64' 'docs/screenshots/*.part*' 'docs/screenshots/screenshot-05-rode-test-wallpaper-small.png' || true
+          git add docs/screenshots/*.jpg
           git diff --cached --quiet && echo "niets te committen" && exit 0
           git commit -m "docs: screenshots gedecodeerd van b64-parts (CI-geverifieerd)"
           git push
