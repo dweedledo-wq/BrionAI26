@@ -356,6 +356,16 @@ cat > "$CFG/config/includes.chroot/etc/lightdm/lightdm-gtk-greeter.conf" <<'EOF'
 background=/usr/share/backgrounds/brionai26/wallpaper.png
 theme-name=Adwaita-dark
 EOF
+# Autologin-race-fix (VM-bewezen 2026-09-26): op de live-ISO startte lightdm
+# vóórdat live-config de gebruiker 'user' aanmaakte → autologin-user=user
+# faalde en de greeter bleef wachten. Drop-in laat lightdm pas starten ná
+# live-config (After=+ Wants=), zodat de live-gebruiker zeker bestaat.
+mkdir -p "$CFG/config/includes.chroot/etc/systemd/system/display-manager.service.d"
+cat > "$CFG/config/includes.chroot/etc/systemd/system/display-manager.service.d/10-after-live-config.conf" <<'EOF'
+[Unit]
+After=live-config.service
+Wants=live-config.service
+EOF
 
 # 2d) Installer-startpictogram op de live-desktop (fase 4).
 mkdir -p "$SKEL/Desktop"
