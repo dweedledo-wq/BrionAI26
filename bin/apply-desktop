@@ -289,7 +289,7 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" <<'EOF'
           <property name="image-style" type="int" value="4"/>
         </property>
         <property name="workspace1" type="empty">
-          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/wallpaper.png"/>
+          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/waltestyle placeholder.png"/>
           <property name="image-style" type="int" value="4"/>
         </property>
         <property name="workspace2" type="empty">
@@ -396,6 +396,7 @@ EOF
 FUISHELL="$CFG/config/includes.chroot/usr/share/brionai26/fui-shell"
 mkdir -p "$FUISHELL"
 cp "$HERE/branding/fui-shell/index.html" "$FUISHELL/index.html"
+cp "$HERE/branding/fui-shell/ai-matrix.html" "$FUISHELL/ai-matrix.html"
 cp "$HERE/branding/fui-shell/wand.js" "$FUISHELL/wand.js"
 mkdir -p "$FUISHELL/assets"
 if [ -f "$HERE/branding/fui-shell/assets/referentie.jpg" ]; then
