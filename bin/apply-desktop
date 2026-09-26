@@ -289,7 +289,7 @@ cat > "$SKEL/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" <<'EOF'
           <property name="image-style" type="int" value="4"/>
         </property>
         <property name="workspace1" type="empty">
-          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/waltestyle placeholder.png"/>
+          <property name="last-image" type="string" value="/usr/share/backgrounds/brionai26/wallpaper.png"/>
           <property name="image-style" type="int" value="4"/>
         </property>
         <property name="workspace2" type="empty">
