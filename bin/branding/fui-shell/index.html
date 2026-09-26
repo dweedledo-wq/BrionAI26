@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><title>BRIONAI26 — COMMAND CENTER</title><style>/* BrionAI26 — FUI-shell v2.1: DE FOTO IS HET SCHERM.
+<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><title>BRIONAI26 — COMMAND CENTER</title><style>
+/* BrionAI26 — FUI-shell v2.1: DE FOTO IS HET SCHERM.
  * Referentie: brand/reference foto (PoI-FUI) fullscreen via cover.
  * Live HUD-readouts als dunne overlays in fotostijl; geen eigen decor.
  */
@@ -86,13 +87,27 @@ html, body {
 .balk.warn { background: linear-gradient(90deg, #C78F00, var(--amber)); }
 .balk.crit { background: linear-gradient(90deg, #B31021, var(--red)); }
 /* positie: hoeken van het scherm, foto blijft maximaal zichtbaar */
-#hud-merk   { top: 14px;    left: 14px;    }
-#hud-klok    { top: 14px;    left: 210px;  text-align: left; }
-#hud-cpu     { top: 14px;    right: 14px;  }
-#hud-ram     { top: 130px;   right: 14px;  }
-#hud-net     { bottom: 14px; right: 14px;  }
-#hud-disk    { bottom: 14px; left: 14px;   }
-#hud-systeem { bottom: 14px; left: 210px;  }
+#hud-merk   { top: 14px;    left: 14px;    transform-origin: top left; }
+#hud-klok    { top: 14px;    left: 210px;  text-align: left; transform-origin: top left; }
+#hud-cpu     { top: 14px;    right: 14px;  transform-origin: top right; }
+#hud-ram     { top: 130px;   right: 14px;  transform-origin: top right; }
+#hud-net     { bottom: 14px; right: 14px;  transform-origin: bottom right; }
+#hud-disk    { bottom: 14px; left: 14px;   transform-origin: bottom left; }
+#hud-systeem { bottom: 14px; left: 210px;  transform-origin: bottom left; }
+/* B3 — hover/klik-machine: paneel komt naar voren (SPB 3D shell-gevoel).
+   IDLE -> hover 200 ms -> EXPANDED (groot + gloed) -> klik -> PINNED.
+   Esc of nogmaals klikken -> terug IDLE. GPU-vrij: css-transforms. */
+.hud {
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  cursor: pointer;
+}
+.hud.expanded, .hud.pinned {
+  transform: scale(1.38);
+  z-index: 40;
+  box-shadow: 0 0 22px rgba(38,131,192,0.55), inset 0 0 24px rgba(38,131,192,0.12), 0 12px 34px rgba(0,0,0,0.6);
+}
+.hud.pinned { border-color: var(--gold); }
+.hud.pinned .kop { color: var(--gold); }
 .kol { display: flex; flex-direction: column; gap: 3px; font-size: 11px; }
 .kol .regel { display: flex; justify-content: space-between; gap: 14px; }
 .kol .waarde { color: var(--txt-main); }
