@@ -1,7 +1,6 @@
 /* BrionAI26 — FUI-shell v2.1: foto-als-scherm + dunne live HUD-overlays.
  * Data: fui-data daemon op localhost:7633 (alleen lokaal, alles ECHT).
- * Alle elementen null-safe: ontbrekende HUD = gewoon geen update.
- */
+ * Alle elementen null-safe: ontbrekende HUD = gewoon geen update. */
 "use strict";
 
 const $ = (id) => document.getElementById(id);
@@ -65,7 +64,7 @@ async function haalData() {
     set("disk-pct", d.disk.pct.toFixed(0));
     balk($("disk-balk"), d.disk.pct);
     led($("led-disk"), d.disk.pct >= 90 ? "crit" : d.disk.pct >= 75 ? "warn" : null);
-    set("disk-sub", d.disk.gebruikt + " / " + d.totaal + " GB");
+    set("disk-sub", d.disk.gebruikt + " / " + d.disk.totaal + " GB");
   }
   if (d.net) {
     set("net-down", fmtBytes(d.net.down));
