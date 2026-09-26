@@ -3,6 +3,7 @@
  * Alle elementen null-safe: ontbrekende HUD = gewoon geen update.
  */
 "use strict";
+
 const $ = (id) => document.getElementById(id);
 const set = (id, txt) => { const el = $(id); if (el) el.textContent = txt; };
 
@@ -23,6 +24,7 @@ function led(el, niveau) {
   if (niveau === "warn") el.classList.add("warn");
   if (niveau === "crit") el.classList.add("crit");
 }
+
 function balk(el, pct, warn = 70, crit = 90) {
   if (!el) return;
   el.style.width = Math.min(100, pct) + "%";
@@ -30,11 +32,13 @@ function balk(el, pct, warn = 70, crit = 90) {
   if (pct >= crit) el.classList.add("crit");
   else if (pct >= warn) el.classList.add("warn");
 }
+
 function fmtBytes(b) {
   if (b > 1048576) return (b / 1048576).toFixed(1) + " MB/s";
   if (b > 1024) return (b / 1024).toFixed(0) + " kB/s";
   return b + " B/s";
 }
+
 async function haalData() {
   let d;
   try {
@@ -44,6 +48,7 @@ async function haalData() {
   } catch {
     return;
   }
+
   if (d.cpu) {
     set("cpu-pct", d.cpu.pct.toFixed(0));
     balk($("cpu-balk"), d.cpu.pct);
@@ -60,7 +65,7 @@ async function haalData() {
     set("disk-pct", d.disk.pct.toFixed(0));
     balk($("disk-balk"), d.disk.pct);
     led($("led-disk"), d.disk.pct >= 90 ? "crit" : d.disk.pct >= 75 ? "warn" : null);
-    set("disk-sub", d.disk.gebruikt + " / " + d.disk.totaal + " GB");
+    set("disk-sub", d.disk.gebruikt + " / " + d.totaal + " GB");
   }
   if (d.net) {
     set("net-down", fmtBytes(d.net.down));
@@ -100,15 +105,18 @@ setInterval(haalData, 1000); haalData();
 (function () {
   var timers = new WeakMap();
   var pinned = null;
+
   function naarVoren(el) {
     el.classList.add("expanded");
     el.classList.remove("idle");
   }
+
   function terug(el) {
     el.classList.remove("expanded");
     if (el !== pinned) el.classList.remove("pinned");
   }
-  document.querySelectorAll(".hud").forEach(function (el) {
+
+  document.querySelectorAll(".hud, .tegel, .mini").forEach(function (el) {
     el.classList.add("idle");
     el.addEventListener("mouseenter", function () {
       var t = timers.get(el); if (t) clearTimeout(t);
@@ -127,6 +135,7 @@ setInterval(haalData, 1000); haalData();
       naarVoren(el);
     });
   });
+
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
       document.querySelectorAll(".hud.pinned, .hud.expanded").forEach(function (el) {
@@ -135,6 +144,7 @@ setInterval(haalData, 1000); haalData();
       pinned = null;
     }
   });
+
   document.addEventListener("click", function () {
     if (pinned) { pinned.classList.remove("pinned", "expanded"); pinned = null; }
   });
