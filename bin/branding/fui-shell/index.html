@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-<meta charset="UTF-8">
-<title>BRIONAI26 — COMMAND CENTER</title>
-<style>
-/* BrionAI26 — FUI-shell v2.1: DE FOTO IS HET SCHERM.
+<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><title>BRIONAI26 — COMMAND CENTER</title><style>/* BrionAI26 — FUI-shell v2.1: DE FOTO IS HET SCHERM.
  * Referentie: brand/reference foto (PoI-FUI) fullscreen via cover.
- * Live HUD-readouts als dunne overlays in fotostijl; geen eigen decor. */
+ * Live HUD-readouts als dunne overlays in fotostijl; geen eigen decor.
+ */
 :root {
   --steel:     #2683C0;
   --steel-br:  #3296E0;
@@ -103,39 +98,32 @@ html, body {
 .kol .waarde { color: var(--txt-main); }
 .kol .label { color: var(--txt-dim); }
 .ok { color: var(--steel-br); }
-</style>
-</head>
-<body>
+</style></head><body>
   <div id="foto"></div>
   <div id="scan"></div>
   <div id="vignette"></div>
-
   <div class="hud" id="hud-merk">
     <div class="kop">SYS/ID</div>
     <div class="groot gold">BRIONAI26</div>
     <div class="sub">COMMAND CENTER · LIVE</div>
   </div>
-
   <div class="hud" id="hud-klok">
     <div class="kop">LOKALE TIJD <span class="led" id="led-klok"></span></div>
     <div class="groot" id="klok-tijd">--:--:--</div>
     <div class="sub" id="klok-datum">-</div>
   </div>
-
   <div class="hud" id="hud-cpu">
     <div class="kop">CPU <span class="led" id="led-cpu"></span></div>
     <div class="groot"><span id="cpu-pct">--</span><span style="font-size:12px;color:var(--txt-dim)">%</span></div>
     <div class="balk-outer"><div class="balk" id="cpu-balk"></div></div>
     <div class="sub" id="cpu-sub">kernen: --</div>
   </div>
-
   <div class="hud" id="hud-ram">
     <div class="kop">RAM <span class="led" id="led-ram"></span></div>
     <div class="groot"><span id="ram-pct">--</span><span style="font-size:12px;color:var(--txt-dim)">%</span></div>
     <div class="balk-outer"><div class="balk" id="ram-balk"></div></div>
     <div class="sub" id="ram-sub">-- / -- GB</div>
   </div>
-
   <div class="hud" id="hud-net">
     <div class="kop">NETWERK <span class="led" id="led-net"></span></div>
     <div class="kol">
@@ -145,14 +133,12 @@ html, body {
     </div>
     <div class="sub" id="net-if">interfaces: --</div>
   </div>
-
   <div class="hud" id="hud-disk">
     <div class="kop">DISK <span class="led" id="led-disk"></span></div>
     <div class="groot"><span id="disk-pct">--</span><span style="font-size:12px;color:var(--txt-dim)">%</span></div>
     <div class="balk-outer"><div class="balk" id="disk-balk"></div></div>
     <div class="sub" id="disk-sub">-- / -- GB</div>
   </div>
-
   <div class="hud" id="hud-systeem">
     <div class="kop">SYSTEEM <span class="led" id="led-svc"></span></div>
     <div class="kol">
@@ -162,7 +148,19 @@ html, body {
     </div>
     <div class="sub" id="load-sub">load: --</div>
   </div>
-
   <script src="wand.js"></script>
-</body>
-</html>
+  <script>
+  (function () {
+    var foto = new Image();
+    foto.onload = function () {
+      var el = document.getElementById('foto');
+      if (el) {
+        el.style.backgroundImage = "url('assets/referentie.jpg')";
+        el.style.opacity = '0.99';
+        setTimeout(function () { el.style.opacity = '1'; }, 120);
+      }
+    };
+    foto.src = 'assets/referentie.jpg';
+  })();
+  </script>
+</body></html>
