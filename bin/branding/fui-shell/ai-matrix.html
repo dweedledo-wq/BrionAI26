@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><title>BRIONAI26 — AI MATRIX</title><style>
+/* BrionAI26 — FUI-shell v2.1 B4: AI MATRIX (werkblad 2).
+ * Zelfde foto-als-scherm + B3 hover/klik-machine.
+ * Tegels: Claude (Super+C), ChatGPT (Super+G), Mistral (Super+M),
+ * Gemini (Super+A), PWA-tegel en browser-tegel.
+ * Klik op tegel opent de echte site in een chromium-venster.
+ */
+:root {
+  --steel:     #2683C0;
+  --steel-br:  #3296E0;
+  --gold:      #F0C090;
+  --amber:     #FFB300;
+  --red:       #FF3B4E;
+  --txt-main:  #CDD8E1;
+  --txt-dim:   #7A93B8;
+  --hud-bg:    rgba(4, 9, 18, 0.55);
+  --hud-brd:   rgba(38, 131, 192, 0.55);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: "JetBrains Mono", "DejaVu Sans Mono", monospace;
+  font-weight: bold;
+  color: var(--txt-main);
+}
+#foto {
+  position: fixed; inset: 0;
+  background: url("assets/referentie.jpg") no-repeat center center;
+  background-size: cover;
+  z-index: 0;
+}
+#scan {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px, rgba(0,0,0,0) 3px,
+    rgba(0,0,0,0.14) 4px
+  );
+}
+#vignette {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.38) 100%);
+}
+#titel {
+  position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+  z-index: 2; text-align: center;
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-brd);
+  border-radius: 3px;
+  padding: 8px 18px;
+  letter-spacing: 0.28em;
+  font-size: 13px;
+  box-shadow: 0 0 8px rgba(38,131,192,0.25);
+}
+#titel .gold { color: var(--gold); }
+#raster {
+  position: fixed; inset: 0; z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 380px));
+  grid-template-rows: repeat(2, minmax(150px, 200px));
+  gap: 26px;
+  place-content: center;
+  justify-items: stretch;
+}
+.tegel {
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-brd);
+  border-radius: 4px;
+  padding: 14px 18px;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 0 8px rgba(38,131,192,0.25), inset 0 0 18px rgba(38,131,192,0.06);
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.tegel .naam { font-size: 19px; letter-spacing: 0.1em; }
+.tegel .kop {
+  font-size: 10px; color: var(--txt-dim);
+  letter-spacing: 0.22em; margin-bottom: 6px;
+  border-bottom: 1px solid rgba(38,131,192,0.35);
+  padding-bottom: 4px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.tegel .hint { font-size: 10px; color: var(--txt-dim); margin-top: 8px; }
+.tegel .led {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--steel); box-shadow: 0 0 6px var(--steel);
+}
+.tegel.expanded, .tegel.pinned {
+  transform: scale(1.34);
+  z-index: 40;
+  box-shadow: 0 0 22px rgba(38,131,192,0.55), inset 0 0 24px rgba(38,131,192,0.12), 0 12px 34px rgba(0,0,0,0.6);
+}
+.tegel.pinned { border-color: var(--gold); }
+.tegel.pinned .kop { color: var(--gold); }
+#onder {
+  position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+  z-index: 2;
+  display: flex; gap: 14px;
+}
+.mini {
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-brd);
+  border-radius: 3px;
+  padding: 6px 12px;
+  font-size: 10px; letter-spacing: 0.18em;
+  color: var(--txt-dim);
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.mini.expanded, .mini.pinned {
+  transform: scale(1.2);
+  z-index: 40;
+  box-shadow: 0 0 16px rgba(38,131,192,0.5);
+}
+.mini.pinned { border-color: var(--gold); color: var(--gold); }
+</style></head><body>
+  <div id="foto"></div>
+  <div id="scan"></div>
+  <div id="vignette"></div>
+  <div id="titel">BRIONAI26 <span class="gold">· AI MATRIX</span></div>
+  <div id="raster">
+    <div class="tegel" data-url="https://claude.ai/chat">
+      <div class="kop">TEGEL 01 <span class="led"></span></div>
+      <div class="naam gold">CLAUDE</div>
+      <div class="hint">Super+C — klik: open claude.ai</div>
+    </div>
+    <div class="tegel" data-url="https://chatgpt.com">
+      <div class="kop">TEGEL 02 <span class="led"></span></div>
+      <div class="naam gold">CHATGPT</div>
+      <div class="hint">Super+G — klik: open chatgpt.com</div>
+    </div>
+    <div class="tegel" data-url="https://chat.mistral.ai">
+      <div class="kop">TEGEL 03 <span class="led"></span></div>
+      <div class="naam gold">MISTRAL</div>
+      <div class="hint">Super+M — klik: open mistral.ai</div>
+    </div>
+    <div class="tegel" data-url="https://gemini.google.com">
+      <div class="kop">TEGEL 04 <span class="led"></span></div>
+      <div class="naam gold">GEMINI</div>
+      <div class="hint">Super+A — klik: open gemini.google.com</div>
+    </div>
+  </div>
+  <div id="onder">
+    <div class="mini" data-url="https://100.96.40.22:9000">PWA · SYSDASH HUB</div>
+    <div class="mini" data-url="https://www.google.com">BROWSER</div>
+  </div>
+  <script src="wand.js"></script>
+  <script>
+  (function () {
+    var foto = new Image();
+    foto.onload = function () {
+      var el = document.getElementById('foto');
+      if (el) {
+        el.style.backgroundImage = "url('assets/referentie.jpg')";
+        el.style.opacity = '0.99';
+        setTimeout(function () { el.style.opacity = '1'; }, 120);
+      }
+    };
+    foto.src = 'assets/referentie.jpg';
+  })();
+  </script>
+  <script>
+  (function () {
+    document.querySelectorAll(".tegel, .mini").forEach(function (el) {
+      el.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var url = el.getAttribute("data-url");
+        if (url) window.open(url, "_blank", "noopener");
+      });
+    });
+  })();
+  </script>
+</body></html>
