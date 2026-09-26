@@ -1,8 +1,8 @@
 /* BrionAI26 — FUI-shell v2.1: foto-als-scherm + dunne live HUD-overlays.
  * Data: fui-data daemon op localhost:7633 (alleen lokaal, alles ECHT).
- * Alle elementen null-safe: ontbrekende HUD = gewoon geen update. */
+ * Alle elementen null-safe: ontbrekende HUD = gewoon geen update.
+ */
 "use strict";
-
 const $ = (id) => document.getElementById(id);
 const set = (id, txt) => { const el = $(id); if (el) el.textContent = txt; };
 
@@ -23,7 +23,6 @@ function led(el, niveau) {
   if (niveau === "warn") el.classList.add("warn");
   if (niveau === "crit") el.classList.add("crit");
 }
-
 function balk(el, pct, warn = 70, crit = 90) {
   if (!el) return;
   el.style.width = Math.min(100, pct) + "%";
@@ -31,13 +30,11 @@ function balk(el, pct, warn = 70, crit = 90) {
   if (pct >= crit) el.classList.add("crit");
   else if (pct >= warn) el.classList.add("warn");
 }
-
 function fmtBytes(b) {
   if (b > 1048576) return (b / 1048576).toFixed(1) + " MB/s";
   if (b > 1024) return (b / 1024).toFixed(0) + " kB/s";
   return b + " B/s";
 }
-
 async function haalData() {
   let d;
   try {
@@ -47,7 +44,6 @@ async function haalData() {
   } catch {
     return;
   }
-
   if (d.cpu) {
     set("cpu-pct", d.cpu.pct.toFixed(0));
     balk($("cpu-balk"), d.cpu.pct);
@@ -92,5 +88,54 @@ async function haalData() {
     set("load-sub", "load: " + d.load);
   }
 }
-
 setInterval(haalData, 1000); haalData();
+
+/* ---- B3: hover/klik-state-machine (SPB 3D shell-gevoel) ----
+   IDLE -> muis erop >=200 ms -> EXPANDED (groot + gloed)
+   EXPANDED -> muis eraf >=200 ms -> IDLE
+   klik -> PINNED (blijft groot ook zonder muis; gouden rand)
+   klik op andere tegel -> die PINNED, rest IDLE
+   Esc of nogmaals klikken -> IDLE
+   GPU-vrij: css-transforms + picom xrender. */
+(function () {
+  var timers = new WeakMap();
+  var pinned = null;
+  function naarVoren(el) {
+    el.classList.add("expanded");
+    el.classList.remove("idle");
+  }
+  function terug(el) {
+    el.classList.remove("expanded");
+    if (el !== pinned) el.classList.remove("pinned");
+  }
+  document.querySelectorAll(".hud").forEach(function (el) {
+    el.classList.add("idle");
+    el.addEventListener("mouseenter", function () {
+      var t = timers.get(el); if (t) clearTimeout(t);
+      timers.set(el, setTimeout(function () { naarVoren(el); }, 200));
+    });
+    el.addEventListener("mouseleave", function () {
+      var t = timers.get(el); if (t) clearTimeout(t);
+      timers.set(el, setTimeout(function () { terug(el); }, 200));
+    });
+    el.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (pinned === el) { pinned = null; terug(el); return; }
+      if (pinned) { pinned.classList.remove("pinned", "expanded"); }
+      pinned = el;
+      el.classList.add("pinned");
+      naarVoren(el);
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".hud.pinned, .hud.expanded").forEach(function (el) {
+        el.classList.remove("pinned", "expanded");
+      });
+      pinned = null;
+    }
+  });
+  document.addEventListener("click", function () {
+    if (pinned) { pinned.classList.remove("pinned", "expanded"); pinned = null; }
+  });
+})();
