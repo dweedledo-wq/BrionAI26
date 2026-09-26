@@ -1,22 +1,35 @@
 #!/bin/sh
-# BrionAI26 — FUI-shell v2 tegelwand-host (B1).
-# Opent de webview-tegelwand fullscreen op het juiste werkblad.
-# De tegelwand zelf: /usr/share/brionai26/fui-shell/index.html
+# BrionAI26 — FUI-shell v2 tegelwand-host (B1 + B4).
+# Opent per werkblad een webview-shell op de foto-look:
+#   werkblad 1 (Command Center): index.html
+#   werkblad 2 (AI Matrix):       ai-matrix.html
+# De shells zelf: /usr/share/brionai26/fui-shell/
 set -eu
-WALL=/usr/share/brionai26/fui-shell/index.html
 
-# B1: tegelwand hoort op werkblad 1 (Command Center).
+SHELLDIR=/usr/share/brionai26/fui-shell
+
+start_wand() {
+    blad="$1"
+    pagina="$2"
+    profiel="/tmp/fui-wand-p${blad}-profile"
+    wmctrl -s "$((blad - 1))" 2>/dev/null || true
+    sleep 0.3
+    chromium --app="file://${SHELLDIR}/${pagina}" \
+        --window-position=0,0 \
+        --window-size="${FUI_WIDTH:-1280},${FUI_HEIGHT:-720}" \
+        --class="brionai26-fuiwand${blad}" \
+        --user-data-dir="${profiel}" \
+        --no-first-run --no-default-browser-check \
+        --disable-features=TranslateUI \
+        --force-device-scale-factor=1 &
+}
+
+# B1: Command Center op werkblad 1.
+start_wand 1 index.html
+sleep 1
+# B4: AI Matrix op werkblad 2.
+wmctrl -s 1 2>/dev/null || true
+start_wand 2 ai-matrix.html
+sleep 1
+# Terug naar werkblad 1 als startbeeld.
 wmctrl -s 0 2>/dev/null || true
-sleep 0.3
-
-# Chromium als kiosk-host: frameless, semi-transparant op desktop-niveau
-# via picom (opacity-rule op de vensternaam, zie picom.conf).
-# --window-positioniera rond eventuele wmctrl-races; --kiosk = fullscreen.
-exec chromium --app="file://${WALL}" \
-    --window-position=0,0 \
-    --window-size="${FUI_WIDTH:-1280},${FUI_HEIGHT:-720}" \
-    --class=brionai26-fuiwand \
-    --user-data-dir=/tmp/fui-wand-profile \
-    --no-first-run --no-default-browser-check \
-    --disable-features=TranslateUI \
-    --force-device-scale-factor=1
